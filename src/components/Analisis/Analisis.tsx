@@ -27,6 +27,7 @@ const COLORES = [
   "#AF19FF",
   "#FF4560",
 ];
+const COLOR_DISPONIBLE = "rgba(128, 128, 128, 0.2)"; // Color sutil para lo que sobra
 
 interface Props {
   presupuestoActual: PresupuestoMensual | null;
@@ -75,7 +76,6 @@ export default function Analisis({
         .filter((t) => t.tipo === "gasto" && t.fecha.startsWith(keyMes))
         .reduce((acc, t) => acc + t.monto, 0);
 
-      // 👇 CAMBIO IMPORTANTE: Usamos presupuestoGeneral como meta
       const metaTotal = presupuestoActual
         ? presupuestoActual.presupuestoGeneral || 0
         : 0;
@@ -85,26 +85,47 @@ export default function Analisis({
     return datos;
   }, [historicoTransacciones, presupuestoActual]);
 
-  // 👇 CAMBIO IMPORTANTE: Total para mostrar en texto
   const totalPresupuesto = presupuestoActual
     ? presupuestoActual.presupuestoGeneral || 0
     : 0;
 
-  // Sumamos TODOS los gastos del mes (incluso sin categoría definida)
   const totalGastadoMes = transaccionesMes
     .filter((t) => t.tipo === "gasto")
     .reduce((acc, t) => acc + t.monto, 0);
 
-  // --- CÁLCULOS VISTA 2: DISTRIBUCIÓN ---
+  // --- CÁLCULOS VISTA 2: DISTRIBUCIÓN (Con Disponible) ---
   const datosDona = useMemo(() => {
     const soloGastos = transaccionesMes.filter((t) => t.tipo === "gasto");
-    return soloGastos.reduce((acc, g) => {
+
+    // 1. Agrupar gastos por categoría
+    const data = soloGastos.reduce((acc, g) => {
       const ex = acc.find((i) => i.name === g.categoria);
       if (ex) ex.value += g.monto;
-      else acc.push({ name: g.categoria, value: g.monto });
+      else acc.push({ name: g.categoria, value: g.monto, color: "" }); // Color vacío placeholder
       return acc;
-    }, [] as { name: string; value: number }[]);
-  }, [transaccionesMes]);
+    }, [] as { name: string; value: number; color: string }[]);
+
+    // Asignar colores a las categorías
+    data.forEach((d, i) => {
+      d.color = COLORES[i % COLORES.length];
+    });
+
+    // 2. Calcular Disponible (Solo si hay presupuesto general)
+    if (totalPresupuesto > 0) {
+      const restante = Math.max(0, totalPresupuesto - totalGastadoMes);
+
+      if (restante > 0) {
+        data.push({
+          name: "Disponible 🟢",
+          value: restante,
+          color: COLOR_DISPONIBLE, // Color especial grisáceo
+        });
+      }
+    }
+
+    // Ordenar para que se vea bonito (Disponible suele quedar bien al final o inicio, aquí por valor)
+    return data.sort((a, b) => b.value - a.value);
+  }, [transaccionesMes, totalPresupuesto, totalGastadoMes]);
 
   // --- CÁLCULOS VISTA 3: DIARIO ---
   const datosBarras = useMemo(() => {
@@ -142,16 +163,17 @@ export default function Analisis({
     if (active && payload && payload.length) {
       return (
         <div className={styles.tooltip}>
-          <p className={styles.tooltipLabel}>{label}</p>
+          <p className={styles.tooltipLabel}>{label || payload[0].name}</p>
           {payload.map((p: any, i: number) => (
             <p
               key={i}
               style={{
-                color: p.color || p.fill,
+                color: p.payload.color || p.color,
                 margin: 0,
                 fontSize: "0.85rem",
               }}
             >
+              {/* Si es piechart el label viene en p.name, si es barchart en p.dataKey o nombre custom */}
               {p.name}: <b>{formatMoney(p.value)}</b>
             </p>
           ))}
@@ -202,7 +224,7 @@ export default function Analisis({
       </div>
 
       <div className={styles.content}>
-        {/* VISTA 1 */}
+        {/* VISTA 1: METAS */}
         {vista === "metas" && (
           <>
             {!presupuestoActual ? (
@@ -318,17 +340,6 @@ export default function Analisis({
                         </div>
                       </div>
                     ))}
-                    {estadoCategorias.length === 0 && (
-                      <p
-                        style={{
-                          fontSize: "0.8rem",
-                          color: "var(--text-muted)",
-                          fontStyle: "italic",
-                        }}
-                      >
-                        Sin rubros definidos.
-                      </p>
-                    )}
                   </div>
                 </div>
               </div>
@@ -336,7 +347,7 @@ export default function Analisis({
           </>
         )}
 
-        {/* VISTA 2 */}
+        {/* VISTA 2: DISTRIBUCIÓN (DONA) */}
         {vista === "distribucion" && (
           <div className={styles.layoutDona}>
             {datosDona.length > 0 ? (
@@ -350,13 +361,16 @@ export default function Analisis({
                         cy="50%"
                         innerRadius={60}
                         outerRadius={80}
-                        paddingAngle={5}
+                        paddingAngle={2}
                         dataKey="value"
                       >
+                        {/* 👇 AQUI USAMOS EL COLOR QUE DEFINIMOS EN EL USEMEMO */}
                         {datosDona.map((entry, index) => (
                           <Cell
                             key={`cell-${index}`}
-                            fill={COLORES[index % COLORES.length]}
+                            fill={entry.color}
+                            stroke="var(--bg-card)"
+                            strokeWidth={2}
                           />
                         ))}
                       </Pie>
@@ -368,7 +382,7 @@ export default function Analisis({
                   {datosDona.map((d, i) => (
                     <div key={d.name} className={styles.itemLeyenda}>
                       <span
-                        style={{ backgroundColor: COLORES[i % COLORES.length] }}
+                        style={{ backgroundColor: d.color }}
                         className={styles.puntoColor}
                       ></span>
                       <div
@@ -378,7 +392,15 @@ export default function Analisis({
                           justifyContent: "space-between",
                         }}
                       >
-                        <span>{d.name}</span>
+                        <span
+                          style={{
+                            color: d.name.includes("Disponible")
+                              ? "var(--text-muted)"
+                              : "var(--text-main)",
+                          }}
+                        >
+                          {d.name}
+                        </span>
                         <b>{formatMoney(d.value)}</b>
                       </div>
                     </div>
@@ -393,7 +415,7 @@ export default function Analisis({
           </div>
         )}
 
-        {/* VISTA 3 */}
+        {/* VISTA 3: DIARIO (BARRAS) */}
         {vista === "diario" && (
           <div className={styles.layoutBarras}>
             <div className={styles.chartWrapper}>
