@@ -1,0 +1,73 @@
+.tarjetaFormulario {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.tarjetaFormulario h3 { margin-top: 0; color: var(--text-main); }
+
+/* Selector Tipo */
+.selectorTipo {
+    display: flex;
+    background: var(--input-bg);
+    padding: 4px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+}
+
+.botonTipo {
+    flex: 1; border: none; background: transparent; padding: 8px;
+    border-radius: 8px; font-weight: 600; color: var(--text-muted);
+    cursor: pointer; transition: all 0.2s;
+}
+
+.activoGasto { background: var(--bg-card); color: var(--danger); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.activoIngreso { background: var(--bg-card); color: var(--success); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+/* Formulario Inputs */
+.form { display: flex; flex-direction: column; gap: 16px; }
+.campo { display: flex; flex-direction: column; gap: 6px; }
+.campo label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+.filaDoble { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.input, .select {
+    padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;
+    transition: all 0.2s; background: var(--input-bg); color: var(--text-main); width: 100%;
+}
+.input:focus, .select:focus { border-color: var(--accent); outline: none; }
+
+.boton {
+    background-color: var(--text-main); color: var(--bg-main);
+    padding: 14px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer;
+    margin-top: 10px; transition: opacity 0.2s; width: 100%;
+}
+.botonIngreso { background-color: var(--success); color: white; }
+.boton:hover { opacity: 0.9; }
+
+/* Contenedor para alinear Cancelar y Guardar */
+.botonesAccion {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.botonCancelar {
+    background-color: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.2s;
+}
+.botonCancelar:hover {
+    background-color: var(--input-bg);
+    color: var(--text-main);
+}
