@@ -1,5 +1,4 @@
 /* --- TEMA Y VARIABLES LOCALES --- */
-/* Necesarias para que el cambio de color funcione dentro de la página */
 .claro {
   --bg-main: #f3f4f6;
   --bg-card: #ffffff;
@@ -25,67 +24,48 @@
 }
 
 /* --- LAYOUT PRINCIPAL --- */
+/* ... (Mantén las variables .claro y .oscuro igual) ... */
+
+/* CAMBIO 1: El Main ahora organiza filas verticales (Header arriba, Contenido abajo) */
 .main {
   background-color: var(--bg-main);
   color: var(--text-main);
   transition: background-color 0.3s, color 0.3s;
   
-  display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 24px;
-  /* Padding ajustado para la Navbar */
-  padding: 20px 40px 40px 40px; 
-  min-height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Espacio entre el Título y el contenido */
+  
+  padding: 1.25rem 2.5rem 2.5rem 2.5rem; 
+  min-height: calc(100vh - 4.375rem);
   font-family: 'Inter', system-ui, sans-serif;
 }
 
-@media (max-width: 900px) {
-  .main { 
-      grid-template-columns: 1fr; 
-      padding: 20px; 
+/* CAMBIO 2: Nuevo contenedor para las dos columnas */
+.gridContent {
+  display: grid;
+  grid-template-columns: 21.875rem 1fr; /* Izquierda fija, Derecha flexible */
+  gap: 1.5rem;
+  width: 100%;
+}
+
+@media (max-width: 56.25rem) {
+  .gridContent { 
+      grid-template-columns: 1fr; /* 1 sola columna en móvil */
   }
 }
 
-/* --- PANELES --- */
-.panelIzquierdo { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 10px; 
-}
-
-.panelDerecho { 
-  display: flex; 
-  flex-direction: column; 
-}
-
-/* --- HEADER SUPERIOR (Donde está el botón de tema) --- */
+/* HEADER (Ahora ocupará todo el ancho) */
 .headerTop {
   display: flex; 
   justify-content: space-between; 
   align-items: center;
-  margin-bottom: 10px;
+  width: 100%;
 }
 
-.brand h1 { font-size: 1.5rem; margin: 0; color: var(--text-main); }
-.brand p { margin: 0 0 20px 0; color: var(--text-muted); font-size: 0.9rem; }
+.brand h1 { font-size: 1.8rem; margin: 0; color: var(--text-main); font-weight: 800; }
+.brand p { margin: 0.25rem 0 0 0; color: var(--accent); font-size: 0.9rem; font-weight: 600; }
 
-/* --- BOTÓN TEMA (EL QUE FALTABA) --- */
-.botonTema {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  width: 40px; 
-  height: 40px;
-  font-size: 1.2rem; 
-  cursor: pointer;
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  transition: transform 0.2s, background-color 0.3s;
-  color: var(--text-main);
-}
-
-.botonTema:hover { 
-  transform: scale(1.1); 
-  border-color: var(--accent);
-}
+/* PANELES (Sin cambios internos) */
+.panelIzquierdo { display: flex; flex-direction: column; gap: 0.625rem; }
+.panelDerecho { display: flex; flex-direction: column; }

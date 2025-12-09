@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import styles from "./page.module.css";
 import { Transaccion } from "@/types";
 
@@ -11,7 +10,6 @@ import Grafico from "@/components/Graficos/Graficos";
 import Lista from "@/components/Lista/Lista";
 
 export default function Home() {
-  // Estado con TODAS las transacciones (Base de datos completa)
   const [listaTransacciones, setListaTransacciones] = useState<Transaccion[]>(
     []
   );
@@ -40,8 +38,7 @@ export default function Home() {
     localStorage.setItem("finansinho-datos", JSON.stringify(nuevaLista));
   };
 
-  // --- CRUD (Operan sobre la lista COMPLETA) ---
-
+  // --- CRUD ---
   const agregarTransaccion = (nueva: Transaccion) => {
     const nuevaLista = [...listaTransacciones, nueva];
     setListaTransacciones(nuevaLista);
@@ -61,35 +58,26 @@ export default function Home() {
     const nuevaLista = listaTransacciones.filter((t) => t.id !== id);
     setListaTransacciones(nuevaLista);
     guardarEnNavegador(nuevaLista);
-    if (itemParaEditar && itemParaEditar.id === id) {
-      setItemParaEditar(null);
-    }
+    if (itemParaEditar && itemParaEditar.id === id) setItemParaEditar(null);
   };
 
-  // --- LÓGICA DE FILTRADO (Solo mes actual) ---
+  // --- DATOS DEL MES ---
   const hoy = new Date();
-  const mesActual = hoy.getMonth(); // 0 = Enero
+  const mesActual = hoy.getMonth();
   const anioActual = hoy.getFullYear();
-
-  // Obtenemos el nombre del mes para mostrarlo en el título
   const nombreMes = new Intl.DateTimeFormat("es-ES", { month: "long" }).format(
     hoy
   );
-  // Capitalizamos la primera letra (ej: "diciembre" -> "Diciembre")
   const nombreMesCapitalizado =
     nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1);
 
-  // Filtramos: Solo mostramos lo que coincida con el mes y año de hoy
   const transaccionesDelMes = listaTransacciones.filter((t) => {
-    // t.fecha viene como "YYYY-MM-DD"
     const [anioStr, mesStr] = t.fecha.split("-");
-    const mesItem = parseInt(mesStr) - 1; // Ajustamos a 0-11
+    const mesItem = parseInt(mesStr) - 1;
     const anioItem = parseInt(anioStr);
-
     return mesItem === mesActual && anioItem === anioActual;
   });
 
-  // Calculamos el balance SOLO de este mes
   const balanceMensual = transaccionesDelMes.reduce((acc, item) => {
     return item.tipo === "ingreso" ? acc + item.monto : acc - item.monto;
   }, 0);
@@ -98,39 +86,40 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      <section className={styles.panelIzquierdo}>
-        <div className={styles.headerTop}>
-          <div className={styles.brand}>
-            <h1>Dashboard 🏠</h1>
-            {/* 👇 Mostramos qué mes estamos viendo */}
-            <p style={{ fontWeight: 500, color: "var(--accent)" }}>
-              Resumen de {nombreMesCapitalizado} {anioActual}
-            </p>
-          </div>
+      {/* 1. HEADER (Ahora está afuera y ocupa todo el ancho) */}
+      <div className={styles.headerTop}>
+        <div className={styles.brand}>
+          <h1>Dashboard 🏠</h1>
+          <p>
+            Resumen de {nombreMesCapitalizado} {anioActual}
+          </p>
         </div>
+      </div>
 
-        {/* Pasamos el balance filtrado */}
-        <Balance total={balanceMensual} />
+      {/* 2. GRILLA DE CONTENIDO (Columnas alineadas) */}
+      <div className={styles.gridContent}>
+        <section className={styles.panelIzquierdo}>
+          {/* El Balance ahora es el primer elemento, igual que el Gráfico */}
+          <Balance total={balanceMensual} />
 
-        <Formulario
-          alAgregar={agregarTransaccion}
-          alEditar={actualizarTransaccion}
-          itemEditar={itemParaEditar}
-          alCancelar={() => setItemParaEditar(null)}
-        />
-      </section>
+          <Formulario
+            alAgregar={agregarTransaccion}
+            alEditar={actualizarTransaccion}
+            itemEditar={itemParaEditar}
+            alCancelar={() => setItemParaEditar(null)}
+          />
+        </section>
 
-      <section className={styles.panelDerecho}>
-        {/* Gráfico solo con datos del mes */}
-        <Grafico items={transaccionesDelMes} tipoPeriodo="mensual" />
+        <section className={styles.panelDerecho}>
+          <Grafico items={transaccionesDelMes} tipoPeriodo="mensual" />
 
-        {/* Lista solo con datos del mes */}
-        <Lista
-          items={transaccionesDelMes}
-          alEliminar={eliminarTransaccion}
-          alSeleccionar={setItemParaEditar}
-        />
-      </section>
+          <Lista
+            items={transaccionesDelMes}
+            alEliminar={eliminarTransaccion}
+            alSeleccionar={setItemParaEditar}
+          />
+        </section>
+      </div>
     </main>
   );
 }
