@@ -1,34 +1,19 @@
-/* --- TEMA Y VARIABLES (Necesario para que no se vea negro) --- */
-.claro {
-  --bg-main: #f3f4f6;
-  --bg-card: #ffffff;
-  --text-main: #1f2937;
-  --text-muted: #6b7280;
-  --border: #e5e7eb;
-  --input-bg: #f9fafb;
-  --accent: #2563eb;
-  --danger: #ef4444;
-  --success: #10b981;
-}
-
-.oscuro {
-  --bg-main: #0f172a;
-  --bg-card: #1e293b;
-  --text-main: #f1f5f9;
-  --text-muted: #94a3b8;
-  --border: #334155;
-  --input-bg: #334155;
-  --accent: #3b82f6;
-  --danger: #f87171;
-  --success: #34d399;
-}
+/* --- YA NO DEFINIMOS VARIABLES AQUÍ (Vienen de globals.css) --- */
 
 /* --- LAYOUT PRINCIPAL --- */
 .main {
   min-height: 100vh;
+  /* Usamos las variables globales directamente */
   background-color: var(--bg-main);
   color: var(--text-main);
-  padding: 40px;
+  
+  /* Padding ajustado para la Navbar lateral: 
+     Arriba/Abajo: 1.5rem (24px)
+     Derecha: 2.5rem (40px)
+     Izquierda: 2.5rem (40px) 
+  */
+  padding: 1.5rem 2.5rem; 
+  
   font-family: system-ui, -apple-system, sans-serif;
   transition: background-color 0.3s, color 0.3s;
 }
@@ -37,9 +22,9 @@
 .topBar {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 30px;
-  max-width: 1200px;
+  gap: 1.25rem; /* 20px */
+  margin-bottom: 1.5rem; /* 24px */
+  max-width: 75rem; /* 1200px */
   margin-left: auto;
   margin-right: auto;
 }
@@ -50,41 +35,24 @@
   font-weight: 800;
 }
 
-.btnVolver {
-  background-color: var(--bg-card);
-  color: var(--text-main);
-  text-decoration: none;
-  padding: 10px 20px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  font-weight: 600;
-  transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.btnVolver:hover {
-  border-color: var(--accent);
-  transform: translateX(-3px); /* Efecto visual de ir atrás */
-}
-
 /* --- GRILLA DASHBOARD (2x2) --- */
 .gridDashboard {
   display: grid;
   /* En escritorio: 2 columnas iguales */
   grid-template-columns: repeat(2, 1fr); 
   /* Separación entre tarjetas */
-  gap: 24px;
-  max-width: 1200px;
-  margin: 0 auto; /* Centrar todo el bloque en pantallas muy grandes */
+  gap: 1.5rem; /* 24px */
+  max-width: 75rem; /* 1200px */
+  margin: 0 auto; 
 }
 
 /* En tablets/celulares: 1 sola columna */
-@media (max-width: 900px) {
+@media (max-width: 56.25rem) { /* 900px */
   .gridDashboard {
     grid-template-columns: 1fr;
   }
   
   .main {
-    padding: 20px;
+    padding: 1.25rem; /* 20px */
   }
 }
