@@ -1,0 +1,377 @@
+/* --- CONTENEDOR PRINCIPAL --- */
+.main {
+  padding: 2rem;
+  max-width: 60rem; /* ~960px */
+  margin: 0 auto;
+  font-family: system-ui, -apple-system, sans-serif;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- ENCABEZADO --- */
+.header {
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.05rem;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* --- TARJETA PRESUPUESTO GENERAL (HERO) --- */
+.generalCard {
+  background: linear-gradient(135deg, var(--accent), #1d4ed8); /* Azul vibrante */
+  color: white;
+  border-radius: 1.25rem;
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4); /* Sombra difusa del mismo color */
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Efecto de brillo decorativo */
+.generalCard::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.generalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.generalInputWrapper {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.currencySymbol {
+  font-size: 2rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.inputGeneral {
+  background: transparent;
+  border: none;
+  /* Línea sutil abajo */
+  border-bottom: 2px solid rgba(255,255,255,0.2); 
+  color: white;
+  font-size: 3rem; /* Número GIGANTE */
+  font-weight: 800;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s;
+  padding: 0;
+  font-family: inherit;
+}
+
+.inputGeneral:focus {
+  border-bottom-color: white;
+}
+
+.inputGeneral::placeholder {
+  color: rgba(255,255,255,0.3);
+}
+
+/* BARRA DE PROGRESO GENERAL */
+.progressBarBg {
+  width: 100%;
+  height: 0.5rem;
+  background: rgba(0, 0, 0, 0.2); /* Fondo oscuro semitransparente */
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.progressBarFill {
+  height: 100%;
+  background: white;
+  border-radius: 1rem;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Resplandor */
+}
+
+.generalInfo {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin: 0;
+  text-align: right;
+  font-weight: 500;
+}
+
+/* Badges de Estado */
+.badgeSuccess {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.8rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+
+.badgeDanger {
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* --- TARJETA DE LISTA (Blanca/Oscura) --- */
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.cardTitle {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.2rem;
+  color: var(--text-main);
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+/* LISTA DE ÍTEMS */
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.2s;
+  border-radius: 0.5rem;
+}
+
+.itemRow:hover {
+  background-color: var(--input-bg);
+}
+
+.itemRow:last-of-type {
+  border-bottom: none;
+}
+
+.catName {
+  font-weight: 600;
+  color: var(--text-main);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Decoración visual para el nombre */
+.catName::before {
+  content: "";
+  display: block;
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: var(--accent);
+  border-radius: 50%;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.monto {
+  font-family: monospace;
+  font-size: 1rem;
+  color: var(--text-main);
+  font-weight: 600;
+  background: var(--input-bg);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+}
+
+.btnDelete {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  transition: all 0.2s;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.btnDelete:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+.emptyState {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 2rem;
+  border: 2px dashed var(--border);
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+/* --- FORMULARIO DE AGREGAR --- */
+.formAdd {
+  background-color: var(--input-bg);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  border: 1px solid var(--border);
+}
+
+/* Inputs comunes */
+.input {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.2s;
+  height: 3rem; /* Altura unificada */
+}
+
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+/* Contenedor flexible del selector */
+.selectorWrapper {
+  flex: 2; /* Ocupa el doble que el monto */
+  min-width: 12rem;
+}
+
+/* El select debe ocupar el 100% de su wrapper */
+.selectorWrapper select, .selectorWrapper input {
+  width: 100%;
+}
+
+.inputMonto {
+  flex: 1;
+  min-width: 8rem;
+}
+
+.btnCancel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  padding: 0 0.75rem;
+  color: var(--text-muted);
+  height: 3rem;
+  margin-left: 0.5rem;
+}
+.btnCancel:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* Botón de Acción Principal */
+.btnAdd {
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  padding: 0 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  height: 3rem;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.btnAdd:hover {
+  background-color: #1d4ed8; /* Un tono más oscuro de azul */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btnAdd:active { transform: translateY(0); }
+
+.btnAdd:disabled {
+  background-color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+/* --- MOBILE --- */
+@media (max-width: 48rem) {
+  .main { padding: 1rem; }
+  
+  .generalInputWrapper { flex-direction: column; align-items: flex-start; gap: 0; }
+  .inputGeneral { font-size: 2.5rem; }
+  
+  .formAdd {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.25rem;
+  }
+  
+  .selectorWrapper, .inputMonto, .btnAdd {
+    width: 100%;
+    min-width: 0;
+  }
+  
+  .itemRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

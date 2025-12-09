@@ -104,3 +104,54 @@ button {
     padding-bottom: 6rem; 
   }
 }
+
+/* src/app/globals.css */
+
+/* ... (tu código anterior) ... */
+
+/* 👇 ELIMINAR FLECHAS DE INPUTS NUMÉRICOS */
+/* Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* ... (Todo tu código anterior) ... */
+
+/* --- PERSONALIZACIÓN DE SCROLLBAR (Para todo el sitio) --- */
+
+/* 1. Ancho de la barra */
+::-webkit-scrollbar {
+  width: 8px; /* Más fina (estándar es 17px) */
+  height: 8px; /* Para scroll horizontal */
+}
+
+/* 2. El "carril" o fondo de la barra */
+::-webkit-scrollbar-track {
+  background: transparent; /* Invisible para que se vea el fondo de la tarjeta */
+}
+
+/* 3. El "pulgar" o la barra que se mueve */
+::-webkit-scrollbar-thumb {
+  background-color: var(--border); /* Usa el color de tus bordes (sutil) */
+  border-radius: 4px; /* Bordes redondos */
+  border: 2px solid transparent; /* Espacio para que parezca "flotando" */
+  background-clip: content-box;
+}
+
+/* 4. Al pasar el mouse por encima */
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-muted); /* Se oscurece un poco para indicar interacción */
+}
+
+/* Para Firefox (Soporte más limitado pero funcional) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}

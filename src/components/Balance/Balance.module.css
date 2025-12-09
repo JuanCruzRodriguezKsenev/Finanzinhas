@@ -1,30 +1,83 @@
-/* Hereda variables del padre, así que podemos usar var(--bg-card) etc */
-.tarjetaTotal {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    color: white;
-    text-align: center;
-    border: none;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    margin-bottom: 24px;
+.card {
+  background: linear-gradient(135deg, var(--accent), #1d4ed8);
+  color: white;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 180px; /* Altura mínima para que quepa todo bien */
 }
 
-.balanceNegativo {
-    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+.titulo {
+  font-size: 0.9rem;
+  font-weight: 500;
+  opacity: 0.9;
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.tarjetaTotal h3 {
-    margin: 0;
-    font-weight: 400;
-    opacity: 0.9;
-    font-size: 0.9rem;
-    color: white;
+.montoPrincipal {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 0 0 1.5rem 0;
+  line-height: 1;
 }
 
-.totalPrecio {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 10px 0 0 0;
-    color: white;
+/* --- DESGLOSE DE CUENTAS --- */
+.desglose {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.2); /* Fondo oscuro semitransparente */
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 350px;
+  justify-content: space-between;
+}
+
+.itemDesglose {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.itemDesglose:first-child {
+  align-items: flex-start;
+}
+
+.itemDesglose:last-child {
+  align-items: flex-end;
+}
+
+.label {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.valorIngreso {
+  color: #86efac; /* Verde claro */
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.valorGasto {
+  color: #fca5a5; /* Rojo claro */
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.separador {
+  width: 1px;
+  height: 30px;
+  background-color: rgba(255, 255, 255, 0.2);
 }

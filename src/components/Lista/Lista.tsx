@@ -10,18 +10,24 @@ interface Props {
 }
 
 export default function Lista({ items, alEliminar, alSeleccionar }: Props) {
-  // Estados Filtros
+  // --- ESTADOS FILTROS ---
   const [filtroTexto, setFiltroTexto] = useState("");
+
+  // Filtro TIPO
   const [filtrosTipo, setFiltrosTipo] = useState<string[]>([
     "ingreso",
     "gasto",
   ]);
 
-  // Estados Categoría (Dropdown)
-  const [menuFiltrosAbierto, setMenuFiltrosAbierto] = useState(false);
+  // Filtro CATEGORÍA
   const [categoriasSeleccionadas, setCategoriasSeleccionadas] = useState<
     string[]
   >([]);
+
+  // Filtro MÉTODO DE PAGO
+  const [filtrosMetodo, setFiltrosMetodo] = useState<string[]>([]);
+
+  const [menuFiltrosAbierto, setMenuFiltrosAbierto] = useState(false);
 
   // Estados Orden
   const [ordenCriterio, setOrdenCriterio] = useState<
@@ -31,15 +37,27 @@ export default function Lista({ items, alEliminar, alSeleccionar }: Props) {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // --- MEMOS: Listas únicas ---
   const todasLasCategorias = useMemo(() => {
     const cats = items.map((i) => i.categoria);
     return Array.from(new Set(cats)).sort();
   }, [items]);
 
+  const todosLosMetodos = useMemo(() => {
+    const metodos = items.map((i) => i.metodoPago || "Efectivo 💵");
+    return Array.from(new Set(metodos)).sort();
+  }, [items]);
+
+  // --- EFECTOS: Inicializar filtros ---
   useEffect(() => {
     setCategoriasSeleccionadas(todasLasCategorias);
   }, [todasLasCategorias]);
 
+  useEffect(() => {
+    setFiltrosMetodo(todosLosMetodos);
+  }, [todosLosMetodos]);
+
+  // Click Outside para cerrar menú
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -60,31 +78,55 @@ export default function Lista({ items, alEliminar, alSeleccionar }: Props) {
     else setFiltrosTipo([...filtrosTipo, tipo]);
   };
 
-  const toggleTodosRubros = () => {
-    if (categoriasSeleccionadas.length === todasLasCategorias.length)
-      setCategoriasSeleccionadas([]);
-    else setCategoriasSeleccionadas(todasLasCategorias);
-  };
-
   const toggleRubroIndividual = (rubro: string) => {
     if (categoriasSeleccionadas.includes(rubro))
       setCategoriasSeleccionadas((prev) => prev.filter((c) => c !== rubro));
     else setCategoriasSeleccionadas((prev) => [...prev, rubro]);
   };
 
+  const toggleTodosRubros = () => {
+    if (categoriasSeleccionadas.length === todasLasCategorias.length)
+      setCategoriasSeleccionadas([]);
+    else setCategoriasSeleccionadas(todasLasCategorias);
+  };
+
+  const toggleMetodo = (metodo: string) => {
+    if (filtrosMetodo.includes(metodo))
+      setFiltrosMetodo((prev) => prev.filter((m) => m !== metodo));
+    else setFiltrosMetodo((prev) => [...prev, metodo]);
+  };
+
+  const toggleTodosMetodos = () => {
+    if (filtrosMetodo.length === todosLosMetodos.length) setFiltrosMetodo([]);
+    else setFiltrosMetodo(todosLosMetodos);
+  };
+
+  // --- PROCESAMIENTO ---
   const itemsProcesados = useMemo(() => {
     let resultado = items;
+
     // 1. Tipo
     resultado = resultado.filter((item) => filtrosTipo.includes(item.tipo));
-    // 2. Texto
+
+    // 2. Texto (Nombre, Rubro o Método)
     if (filtroTexto.trim() !== "") {
-      resultado = resultado.filter((item) =>
-        item.concepto.toLowerCase().includes(filtroTexto.toLowerCase())
+      const txt = filtroTexto.toLowerCase();
+      resultado = resultado.filter(
+        (item) =>
+          item.concepto.toLowerCase().includes(txt) ||
+          item.categoria.toLowerCase().includes(txt) ||
+          (item.metodoPago || "").toLowerCase().includes(txt)
       );
     }
+
     // 3. Rubros
     resultado = resultado.filter((item) =>
       categoriasSeleccionadas.includes(item.categoria)
+    );
+
+    // 4. Métodos
+    resultado = resultado.filter((item) =>
+      filtrosMetodo.includes(item.metodoPago || "Efectivo 💵")
     );
 
     // Ordenar
@@ -112,13 +154,17 @@ export default function Lista({ items, alEliminar, alSeleccionar }: Props) {
     filtrosTipo,
     filtroTexto,
     categoriasSeleccionadas,
+    filtrosMetodo,
     ordenCriterio,
     ordenAsc,
   ]);
 
-  const estanTodosRubrosSeleccionados =
+  const estanTodosRubros =
     categoriasSeleccionadas.length === todasLasCategorias.length &&
     todasLasCategorias.length > 0;
+  const estanTodosMetodos =
+    filtrosMetodo.length === todosLosMetodos.length &&
+    todosLosMetodos.length > 0;
 
   const getFechaVisual = (fechaStr: string) => {
     const f = new Date(fechaStr);
@@ -140,18 +186,16 @@ export default function Lista({ items, alEliminar, alSeleccionar }: Props) {
       </div>
 
       <div className={styles.toolbar}>
-        {/* 1. INPUT BÚSQUEDA (Toda la primera línea) */}
         <input
           type="text"
-          placeholder="🔍 Buscar por nombre..."
+          placeholder="🔍 Buscar por nombre, rubro o método..."
           className={styles.inputBusqueda}
           value={filtroTexto}
           onChange={(e) => setFiltroTexto(e.target.value)}
         />
 
-        {/* 2. FILA DE CONTROLES (Filtros a la izquierda, Orden a la derecha) */}
         <div className={styles.controlsRow}>
-          {/* MENÚ DE FILTROS */}
+          {/* MENU FILTROS */}
           <div className={styles.dropdownWrapper} ref={dropdownRef}>
             <button
               className={styles.dropdownButton}
@@ -163,54 +207,86 @@ export default function Lista({ items, alEliminar, alSeleccionar }: Props) {
 
             {menuFiltrosAbierto && (
               <div className={styles.dropdownMenu}>
-                {/* SECCIÓN TIPOS */}
-                <div className={styles.dropdownSectionTitle}>
-                  Tipo de Movimiento
-                </div>
-                <label className={styles.dropdownItem}>
-                  <input
-                    type="checkbox"
-                    className={styles.checkbox}
-                    checked={filtrosTipo.includes("ingreso")}
-                    onChange={() => toggleFiltroTipo("ingreso")}
-                  />
-                  Ingresos 💰
-                </label>
-                <label className={styles.dropdownItem}>
-                  <input
-                    type="checkbox"
-                    className={styles.checkbox}
-                    checked={filtrosTipo.includes("gasto")}
-                    onChange={() => toggleFiltroTipo("gasto")}
-                  />
-                  Gastos 💸
-                </label>
-
-                <div className={styles.divider}></div>
-
-                {/* SECCIÓN RUBROS */}
-                <div className={styles.dropdownSectionTitle}>Rubros</div>
-                <label className={styles.dropdownItem}>
-                  <input
-                    type="checkbox"
-                    className={styles.checkbox}
-                    checked={estanTodosRubrosSeleccionados}
-                    onChange={toggleTodosRubros}
-                  />
-                  <strong>Todos los rubros</strong>
-                </label>
-
-                {todasLasCategorias.map((cat) => (
-                  <label key={cat} className={styles.dropdownItem}>
+                {/* COLUMNA 1: TIPOS */}
+                <div className={styles.filterColumn}>
+                  <div className={styles.dropdownSectionTitle}>
+                    Tipo de Movimiento
+                  </div>
+                  <label className={styles.dropdownItem}>
                     <input
                       type="checkbox"
                       className={styles.checkbox}
-                      checked={categoriasSeleccionadas.includes(cat)}
-                      onChange={() => toggleRubroIndividual(cat)}
+                      checked={filtrosTipo.includes("ingreso")}
+                      onChange={() => toggleFiltroTipo("ingreso")}
                     />
-                    {cat}
+                    Ingresos 💰
                   </label>
-                ))}
+                  <label className={styles.dropdownItem}>
+                    <input
+                      type="checkbox"
+                      className={styles.checkbox}
+                      checked={filtrosTipo.includes("gasto")}
+                      onChange={() => toggleFiltroTipo("gasto")}
+                    />
+                    Gastos 💸
+                  </label>
+                </div>
+
+                {/* COLUMNA 2: RUBROS */}
+                <div className={styles.filterColumn}>
+                  <div className={styles.dropdownSectionTitle}>Rubros</div>
+                  <label className={styles.dropdownItem}>
+                    <input
+                      type="checkbox"
+                      className={styles.checkbox}
+                      checked={estanTodosRubros}
+                      onChange={toggleTodosRubros}
+                    />
+                    <strong>Todos</strong>
+                  </label>
+                  <div className={styles.scrollableList}>
+                    {todasLasCategorias.map((cat) => (
+                      <label key={cat} className={styles.dropdownItem}>
+                        <input
+                          type="checkbox"
+                          className={styles.checkbox}
+                          checked={categoriasSeleccionadas.includes(cat)}
+                          onChange={() => toggleRubroIndividual(cat)}
+                        />
+                        {cat}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* COLUMNA 3: MÉTODOS */}
+                <div className={styles.filterColumn}>
+                  <div className={styles.dropdownSectionTitle}>
+                    Métodos de Pago
+                  </div>
+                  <label className={styles.dropdownItem}>
+                    <input
+                      type="checkbox"
+                      className={styles.checkbox}
+                      checked={estanTodosMetodos}
+                      onChange={toggleTodosMetodos}
+                    />
+                    <strong>Todos</strong>
+                  </label>
+                  <div className={styles.scrollableList}>
+                    {todosLosMetodos.map((metodo) => (
+                      <label key={metodo} className={styles.dropdownItem}>
+                        <input
+                          type="checkbox"
+                          className={styles.checkbox}
+                          checked={filtrosMetodo.includes(metodo)}
+                          onChange={() => toggleMetodo(metodo)}
+                        />
+                        {metodo}
+                      </label>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -227,7 +303,6 @@ export default function Lista({ items, alEliminar, alSeleccionar }: Props) {
               <option value="rubro">🏷️ Rubro</option>
               <option value="nombre">abc Nombre</option>
             </select>
-
             <button
               className={styles.btnToggle}
               onClick={() => setOrdenAsc(!ordenAsc)}
@@ -239,7 +314,6 @@ export default function Lista({ items, alEliminar, alSeleccionar }: Props) {
         </div>
       </div>
 
-      {/* LISTA DE ITEMS */}
       <div className={styles.listaItems}>
         {itemsProcesados.length > 0 ? (
           itemsProcesados.map((item) => {
@@ -253,9 +327,16 @@ export default function Lista({ items, alEliminar, alSeleccionar }: Props) {
                   </div>
                   <div className={styles.detalles}>
                     <h4>{item.concepto}</h4>
-                    <span className={styles.categoriaBadge}>
-                      {item.categoria}
-                    </span>
+                    <div
+                      style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}
+                    >
+                      <span className={styles.categoriaBadge}>
+                        {item.categoria}
+                      </span>
+                      <span className={styles.metodoBadge}>
+                        {item.metodoPago || "Efectivo 💵"}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className={styles.acciones}>

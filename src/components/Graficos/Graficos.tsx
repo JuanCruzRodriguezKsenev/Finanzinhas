@@ -31,8 +31,7 @@ interface Props {
   onClick?: (data: any) => void;
 }
 
-// ... (Copia aquí los componentes CustomBarTooltip, CustomPieTooltip y renderLegend como siempre) ...
-// (Los omito para ahorrar espacio, pero NO los borres)
+// --- TOOLTIP BARRAS (CORREGIDO) ---
 const CustomBarTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
@@ -41,11 +40,13 @@ const CustomBarTooltip = ({ active, payload, label }: any) => {
         <p className={styles.tooltipTitle}>{label}</p>
         <div className={styles.tooltipRow}>
           <span className={styles.textSuccess}>● Ingresos:</span>
-          <span>${data.ingreso}</span>
+          {/* 👇 Formato con separador de miles */}
+          <span>${data.ingreso.toLocaleString()}</span>
         </div>
         <div className={styles.tooltipRow}>
           <span className={styles.textDanger}>● Gastos:</span>
-          <span>${data.gasto}</span>
+          {/* 👇 Formato con separador de miles */}
+          <span>${data.gasto.toLocaleString()}</span>
         </div>
         <hr className={styles.tooltipDivider} />
         <div className={styles.tooltipRow}>
@@ -55,7 +56,9 @@ const CustomBarTooltip = ({ active, payload, label }: any) => {
               data.balance >= 0 ? styles.textSuccess : styles.textDanger
             }
           >
-            {data.balance >= 0 ? "+" : ""}${data.balance}
+            {data.balance >= 0 ? "+" : ""}
+            {/* 👇 Formato con separador de miles */}$
+            {data.balance.toLocaleString()}
           </strong>
         </div>
       </div>
@@ -63,6 +66,8 @@ const CustomBarTooltip = ({ active, payload, label }: any) => {
   }
   return null;
 };
+
+// --- TOOLTIP TORTA (CORREGIDO) ---
 const CustomPieTooltip = ({ active, payload, total }: any) => {
   if (active && payload && payload.length) {
     const { name, value } = payload[0];
@@ -72,7 +77,8 @@ const CustomPieTooltip = ({ active, payload, total }: any) => {
         <p className={styles.tooltipTitle}>{name}</p>
         <div className={styles.tooltipRow}>
           <span>Monto:</span>
-          <strong>${value}</strong>
+          {/* 👇 Formato con separador de miles */}
+          <strong>${value.toLocaleString()}</strong>
         </div>
         <div className={styles.tooltipRow}>
           <span>Impacto:</span>
@@ -83,6 +89,7 @@ const CustomPieTooltip = ({ active, payload, total }: any) => {
   }
   return null;
 };
+
 const renderLegend = (props: any) => {
   const { payload } = props;
   return (
@@ -110,7 +117,7 @@ export default function Grafico({
   const soloGastos = items.filter((t) => t.tipo === "gasto");
   const soloIngresos = items.filter((t) => t.tipo === "ingreso");
 
-  // Cálculos... (Igual que antes)
+  // Cálculos Torta
   const datosCategoria = soloGastos.reduce((acc, g) => {
     const ex = acc.find((i) => i.name === g.categoria);
     if (ex) ex.value += g.monto;
@@ -123,6 +130,7 @@ export default function Grafico({
     0
   );
 
+  // Cálculos Barras
   const datosComparativos = useMemo(() => {
     let estructura: {
       [key: string]: { name: string; ingreso: number; gasto: number };
@@ -189,7 +197,13 @@ export default function Grafico({
     }));
   }, [items, tipoPeriodo]);
 
-  // RENDERIZADO
+  // Formateador de eje Y (ej: 1.5k, 2M)
+  const formatYAxis = (value: number) => {
+    if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `$${(value / 1000).toFixed(0)}k`;
+    return `$${value}`;
+  };
+
   return (
     <div className={styles.tarjetaGrafico}>
       <div className={styles.headerGrafico}>
@@ -264,7 +278,6 @@ export default function Grafico({
                   </div>
                 </>
               ) : (
-                /* Caso: Hay ingresos pero NO gastos para la torta */
                 <div className={styles.contenedorVacio}>
                   <span className={styles.iconoVacio}>🤷‍♂️</span>
                   <p className={styles.vacioTexto}>Solo hay ingresos.</p>
@@ -278,7 +291,7 @@ export default function Grafico({
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={datosComparativos}
-                  margin={{ top: 5, right: 5, left: -20, bottom: 0 }}
+                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
                   onClick={onClick}
                   style={{ cursor: onClick ? "pointer" : "default" }}
                 >
@@ -302,6 +315,8 @@ export default function Grafico({
                     tick={{ fill: "var(--text-muted)", fontSize: 11 }}
                     axisLine={false}
                     tickLine={false}
+                    width={45}
+                    tickFormatter={formatYAxis}
                   />
                   <Tooltip
                     content={<CustomBarTooltip />}
@@ -338,7 +353,6 @@ export default function Grafico({
           )}
         </div>
       ) : (
-        /* 👇 AQUÍ ESTÁ EL CAMBIO PRINCIPAL: El contenedor vacío mantiene la altura */
         <div className={styles.contenedorVacio}>
           <span className={styles.iconoVacio}>📉</span>
           <p className={styles.vacioTexto}>Sin movimientos.</p>

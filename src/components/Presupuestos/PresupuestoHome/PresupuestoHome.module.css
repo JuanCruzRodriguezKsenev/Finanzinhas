@@ -1,0 +1,19 @@
+.container {
+    background: var(--bg-card);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.header h3 { margin: 0; font-size: 1.1rem; color: var(--text-main); }
+.zonaGrafico { width: 100%; height: 10rem; }
+.listaBarras { display: flex; flex-direction: column; gap: 0.8rem; }
+.itemBarra { display: flex; flex-direction: column; gap: 0.3rem; }
+.info { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); }
+.nombreCat { color: var(--text-main); font-weight: 600; }
+.barraFondo { width: 100%; height: 0.6rem; background: var(--input-bg); border-radius: 1rem; overflow: hidden; }
+.barraRelleno { height: 100%; border-radius: 1rem; transition: width 0.5s; }
+.verde { background: var(--success); }
+.amarillo { background: #facc15; }
+.rojo { background: var(--danger); }

@@ -12,6 +12,8 @@ export default function Navbar() {
   const rutas = [
     { nombre: "Dashboard", path: "/", icono: "🏠" },
     { nombre: "Estadísticas", path: "/estadisticas", icono: "📊" },
+    // ... dentro de rutas ...
+    { nombre: "Presupuestos", path: "/presupuestos", icono: "🎯" },
   ];
 
   return (
