@@ -1,15 +1,64 @@
+/* --- 1. RESET BÁSICO --- */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+/* --- 2. DEFINICIÓN DE VARIABLES GLOBALES --- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* DIMENSIONES MAESTRAS (Para usar en Navbar y Layout) */
+  --sidebar-width: 13rem; /* Aprox 208px */
+
+  /* COLORES BASE (Default / Fallback) */
+  --bg-main: #f3f4f6;
+  --bg-card: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --input-bg: #f9fafb;
+  --accent: #2563eb;
+  --danger: #ef4444;
+  --success: #10b981;
+  
+  /* Navbar */
+  --nav-bg: rgba(255, 255, 255, 0.85);
+  --nav-border: rgba(0, 0, 0, 0.05);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* --- 3. TEMAS (Clases controladas por ThemeContext) --- */
+
+/* Tema Claro */
+body.claro {
+  --bg-main: #f3f4f6;
+  --bg-card: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --input-bg: #f9fafb;
+  --accent: #2563eb;
+  --danger: #ef4444;
+  --success: #10b981;
+  --nav-bg: rgba(255, 255, 255, 0.85);
+  --nav-border: rgba(0, 0, 0, 0.05);
 }
 
+/* Tema Oscuro */
+body.oscuro {
+  --bg-main: #0f172a;
+  --bg-card: #1e293b;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --input-bg: #334155;
+  --accent: #3b82f6;
+  --danger: #f87171;
+  --success: #34d399;
+  --nav-bg: rgba(15, 23, 42, 0.85);
+  --nav-border: rgba(255, 255, 255, 0.1);
+}
+
+/* --- 4. ESTILOS BASE DEL CUERPO --- */
 html,
 body {
   max-width: 100vw;
@@ -17,26 +66,41 @@ body {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+  
+  /* Variables de color activas */
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  
+  /* Transición suave al cambiar de tema */
+  transition: background-color 0.3s, color 0.3s;
 }
 
 a {
-  color: inherit;
   text-decoration: none;
+  color: inherit;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+ul {
+  list-style: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* --- 5. RESPONSIVE (LAYOUT WRAPPER) --- */
+/* Esto controla el div que empuja el contenido cuando la barra cambia */
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    /* En móvil, anulamos el margen izquierdo porque la barra baja */
+    margin-left: 0 !important;
+    width: 100% !important;
+    
+    /* Agregamos padding abajo para que la barra inferior no tape el contenido */
+    padding-bottom: 6rem; 
   }
 }

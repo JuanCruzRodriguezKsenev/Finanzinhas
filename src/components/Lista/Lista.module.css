@@ -1,94 +1,126 @@
-.tarjetaLista {
-    background: var(--bg-card);
+/* ... (Mantén listaContainer y header igual) ... */
+.listaContainer {
+    background-color: var(--bg-card);
     border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    padding: 20px;
     border: 1px solid var(--border);
-    margin-bottom: 24px;
-    transition: background-color 0.3s, border-color 0.3s;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    display: flex; flex-direction: column; gap: 15px; min-height: 400px; 
 }
 
-.headerLista {
+.header {
     display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px;
+    border-bottom: 1px solid var(--border); padding-bottom: 15px;
 }
-.headerLista h3 { color: var(--text-main); margin: 0; }
+.header h3 { margin: 0; color: var(--text-main); font-size: 1.2rem; }
 
-.barraHerramientas { display: flex; gap: 10px; align-items: center; }
-.filtros { display: flex; gap: 5px; }
-
-/* --- CORRECCIÓN AQUÍ --- */
-/* Definimos los estilos BASE para el filtro, el activo y el botón de orden juntos */
-.filtro, .filtroActivo, .botonOrden {
-    background: var(--input-bg); 
-    border: 1px solid var(--border); 
-    color: var(--text-muted);
-    padding: 8px 12px;         /* Padding igual para todos */
-    border-radius: 8px; 
-    cursor: pointer; 
-    transition: all 0.2s;
-    font-size: 0.9rem;         /* Tamaño fijo para que no baile */
-    display: flex;             /* Para centrar contenido si tienen iconos */
-    align-items: center;
-    justify-content: center;
-    min-width: 40px;           /* Ancho mínimo para que no se aplasten */
+/* --- TOOLBAR (CONTENEDOR PRINCIPAL) --- */
+.toolbar {
+    display: flex;
+    flex-direction: column; /* Apilamos Buscador arriba, Controles abajo */
+    gap: 12px;
+    margin-bottom: 10px;
+    width: 100%;
 }
 
-/* Estilos específicos solo para cuando está activo (sobreescribe lo necesario) */
-.filtroActivo { 
-    background: rgba(37, 99, 235, 0.15); 
-    color: var(--accent); 
-    border-color: var(--accent); 
-    font-weight: 600;          /* Negrita */
-}
-/* ----------------------- */
-
-.listaItems { padding: 0; margin: 0; }
-.item {
-    display: flex; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border); gap: 16px;
-}
-.item:last-child { border-bottom: none; }
-
-.fechaCaja {
-    background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px;
-    padding: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    width: 50px; height: 50px; color: var(--text-muted); line-height: 1;
-}
-.fechaCaja span { font-weight: bold; font-size: 1.1rem; color: var(--text-main); }
-.fechaCaja small { font-size: 0.7rem; text-transform: uppercase; }
-
-.detalles { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; }
-.concepto { font-weight: 600; color: var(--text-main); }
-.categoriaTag {
-    font-size: 0.75rem; color: var(--text-muted); background: var(--input-bg);
-    padding: 2px 8px; border: 1px solid var(--border); border-radius: 12px; width: fit-content;
-}
-
-.acciones { display: flex; align-items: center; gap: 12px; }
-.precio { font-weight: 700; font-size: 1rem; }
-.precioPositivo { color: var(--success); }
-.precioNegativo { color: var(--danger); }
-
-.botonEliminar { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
-.botonEliminar:hover { color: var(--danger); }
-
-/* Botón Editar (Estilo similar al eliminar pero azulito/suave) */
-.botonEditar {
-    background: none;
-    border: none;
-    font-size: 1.1rem;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    filter: grayscale(100%); /* Lo hacemos gris por defecto */
-    opacity: 0.6;
-}
-
-.botonEditar:hover {
+/* 1. INPUT BÚSQUEDA (FILA SUPERIOR) */
+.inputBusqueda {
+    width: 100%; /* Ocupa todo el ancho */
     background-color: var(--input-bg);
-    filter: grayscale(0%); /* A color al pasar el mouse */
-    opacity: 1;
-    transform: scale(1.1);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 10px 12px; /* Un poco más alto para ser fácil de tocar */
+    border-radius: 10px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
+.inputBusqueda:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1); }
+
+/* 2. FILA DE CONTROLES (FILTROS + ORDEN) */
+.controlsRow {
+    display: flex;
+    justify-content: space-between; /* Uno a cada extremo */
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap; /* En pantallas muy chicas baja si es necesario */
+    gap: 10px;
+}
+
+/* --- DROPDOWN (MENÚ DESPLEGABLE) --- */
+.dropdownWrapper { position: relative; }
+
+.dropdownButton {
+    background-color: var(--input-bg);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 8px; min-width: 160px; justify-content: space-between;
+}
+.dropdownButton:hover { border-color: var(--accent); background-color: var(--bg-card); }
+
+.dropdownMenu {
+    position: absolute;
+    top: 100%; left: 0; margin-top: 5px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    z-index: 50;
+    min-width: 220px;
+    display: flex; flex-direction: column; gap: 2px;
+}
+
+.dropdownSectionTitle {
+    font-size: 0.7rem; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; margin: 8px 4px 4px 4px; letter-spacing: 0.5px;
+}
+
+.dropdownItem {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px; border-radius: 6px; cursor: pointer;
+    font-size: 0.9rem; color: var(--text-main); transition: background 0.2s;
+}
+.dropdownItem:hover { background-color: var(--input-bg); }
+
+.checkbox { accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer; }
+.divider { height: 1px; background-color: var(--border); margin: 6px 0; }
+
+/* GRUPO ORDEN */
+.grupoOrden { display: flex; align-items: center; gap: 8px; }
+
+.selectControl {
+    background-color: var(--input-bg); border: 1px solid var(--border); color: var(--text-main);
+    padding: 8px 30px 8px 12px; border-radius: 10px; font-size: 0.85rem; cursor: pointer; outline: none;
+    appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='gray' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat; background-position: right 8px center; background-size: 14px; min-width: 130px;
+}
+.selectControl:hover { border-color: var(--accent); }
+
+.btnToggle { background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); padding: 8px; border-radius: 10px; cursor: pointer; min-width: 36px; display: flex; justify-content: center;}
+.btnToggle:hover { border-color: var(--accent); background-color: var(--bg-card); }
+
+/* ... (Resto igual: listaItems, item, etc) ... */
+.listaItems { display: flex; flex-direction: column; gap: 10px; max-height: 500px; overflow-y: auto; padding-right: 5px; }
+.listaItems::-webkit-scrollbar { width: 6px; }
+.listaItems::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 4px; }
+.item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background-color: var(--input-bg); border-radius: 12px; border: 1px solid transparent; transition: transform 0.1s, border-color 0.2s; }
+.item:hover { border-color: var(--accent); transform: translateX(2px); }
+.infoPrincipal { display: flex; gap: 15px; align-items: center; }
+.fechaBox { background-color: var(--bg-card); border: 1px solid var(--border); padding: 6px 10px; border-radius: 8px; text-align: center; min-width: 50px; }
+.dia { display: block; font-size: 1.1rem; font-weight: bold; color: var(--text-main); }
+.mes { display: block; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); }
+.detalles h4 { margin: 0 0 4px 0; color: var(--text-main); font-size: 1rem; text-transform: capitalize; }
+.categoriaBadge { font-size: 0.75rem; background-color: var(--bg-card); padding: 2px 8px; border-radius: 10px; color: var(--text-muted); border: 1px solid var(--border); }
+.acciones { display: flex; align-items: center; gap: 15px; }
+.monto { font-weight: 700; font-size: 1rem; }
+.ingreso { color: var(--success); }
+.gasto { color: var(--danger); }
+.btnIcon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; padding: 5px; border-radius: 50%; transition: color 0.2s, background 0.2s; }
+.btnIcon:hover { color: var(--text-main); background-color: var(--border); }
+.btnDelete:hover { color: var(--danger); background-color: rgba(239, 68, 68, 0.1); }
+.vacio { text-align: center; color: var(--text-muted); padding: 30px; font-style: italic; }

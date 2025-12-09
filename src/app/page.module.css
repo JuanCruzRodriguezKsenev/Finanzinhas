@@ -1,5 +1,5 @@
-/* --- VARIABLES GLOBALES --- */
-/* Las definimos aquí para que todos los componentes hijos las hereden */
+/* --- TEMA Y VARIABLES LOCALES --- */
+/* Necesarias para que el cambio de color funcione dentro de la página */
 .claro {
   --bg-main: #f3f4f6;
   --bg-card: #ffffff;
@@ -8,7 +8,6 @@
   --border: #e5e7eb;
   --input-bg: #f9fafb;
   --accent: #2563eb;
-  --accent-text: #ffffff;
   --danger: #ef4444;
   --success: #10b981;
 }
@@ -21,7 +20,6 @@
   --border: #334155;
   --input-bg: #334155;
   --accent: #3b82f6;
-  --accent-text: #ffffff;
   --danger: #f87171;
   --success: #34d399;
 }
@@ -31,64 +29,63 @@
   background-color: var(--bg-main);
   color: var(--text-main);
   transition: background-color 0.3s, color 0.3s;
-
+  
   display: grid;
-  grid-template-columns: 350px 1fr; /* Izquierda fija, derecha flexible */
+  grid-template-columns: 350px 1fr;
   gap: 24px;
-  padding: 40px;
-  min-height: 100vh;
-  font-family: "Inter", system-ui, sans-serif;
+  /* Padding ajustado para la Navbar */
+  padding: 20px 40px 40px 40px; 
+  min-height: calc(100vh - 70px);
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
 @media (max-width: 900px) {
-  .main {
-    grid-template-columns: 1fr;
-    padding: 20px;
+  .main { 
+      grid-template-columns: 1fr; 
+      padding: 20px; 
   }
 }
 
-/* --- CABECERA Y BOTONES GLOBALES --- */
-.panelIzquierdo {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.panelDerecho {
-  display: flex;
-  flex-direction: column;
+/* --- PANELES --- */
+.panelIzquierdo { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 10px; 
 }
 
+.panelDerecho { 
+  display: flex; 
+  flex-direction: column; 
+}
+
+/* --- HEADER SUPERIOR (Donde está el botón de tema) --- */
 .headerTop {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-.brand h1 {
-  font-size: 1.5rem;
-  margin: 0;
-  color: var(--text-main);
-}
-.brand p {
-  margin: 0 0 20px 0;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
+.brand h1 { font-size: 1.5rem; margin: 0; color: var(--text-main); }
+.brand p { margin: 0 0 20px 0; color: var(--text-muted); font-size: 0.9rem; }
 
+/* --- BOTÓN TEMA (EL QUE FALTABA) --- */
 .botonTema {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 50%;
-  width: 40px;
+  width: 40px; 
   height: 40px;
-  font-size: 1.2rem;
+  font-size: 1.2rem; 
   cursor: pointer;
-  display: flex;
-  align-items: center;
+  display: flex; 
+  align-items: center; 
   justify-content: center;
-  transition: transform 0.2s;
+  transition: transform 0.2s, background-color 0.3s;
   color: var(--text-main);
 }
-.botonTema:hover {
-  transform: scale(1.1);
+
+.botonTema:hover { 
+  transform: scale(1.1); 
+  border-color: var(--accent);
 }
