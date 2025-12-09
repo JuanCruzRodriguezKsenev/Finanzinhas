@@ -28,11 +28,11 @@ const COLORES = [
 interface Props {
   items: Transaccion[];
   tipoPeriodo?: "anual" | "mensual" | "semanal" | "diario";
-  onClick?: (data: any) => void; // 👈 NUEVA PROP: Para escuchar clicks
+  onClick?: (data: any) => void;
 }
 
-// ... (Mantén los componentes CustomBarTooltip, CustomPieTooltip y renderLegend IGUALES que antes) ...
-// (Los omito aquí para ahorrar espacio, pero NO los borres de tu archivo)
+// ... (Copia aquí los componentes CustomBarTooltip, CustomPieTooltip y renderLegend como siempre) ...
+// (Los omito para ahorrar espacio, pero NO los borres)
 const CustomBarTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
@@ -63,7 +63,6 @@ const CustomBarTooltip = ({ active, payload, label }: any) => {
   }
   return null;
 };
-
 const CustomPieTooltip = ({ active, payload, total }: any) => {
   if (active && payload && payload.length) {
     const { name, value } = payload[0];
@@ -84,7 +83,6 @@ const CustomPieTooltip = ({ active, payload, total }: any) => {
   }
   return null;
 };
-
 const renderLegend = (props: any) => {
   const { payload } = props;
   return (
@@ -107,12 +105,12 @@ export default function Grafico({
   tipoPeriodo = "anual",
   onClick,
 }: Props) {
-  const [vista, setVista] = useState<"torta" | "barras">("torta"); // Default a barras para ver la interacción fácil? No, dejamos torta.
+  const [vista, setVista] = useState<"torta" | "barras">("torta");
 
   const soloGastos = items.filter((t) => t.tipo === "gasto");
   const soloIngresos = items.filter((t) => t.tipo === "ingreso");
 
-  // Cálculos Torta
+  // Cálculos... (Igual que antes)
   const datosCategoria = soloGastos.reduce((acc, g) => {
     const ex = acc.find((i) => i.name === g.categoria);
     if (ex) ex.value += g.monto;
@@ -125,12 +123,10 @@ export default function Grafico({
     0
   );
 
-  // Cálculos Barras Dinámicos
   const datosComparativos = useMemo(() => {
     let estructura: {
       [key: string]: { name: string; ingreso: number; gasto: number };
     } = {};
-
     if (tipoPeriodo === "anual") {
       const meses = [
         "Ene",
@@ -147,8 +143,7 @@ export default function Grafico({
         "Dic",
       ];
       meses.forEach((mes, i) => {
-        const key = i.toString();
-        estructura[key] = { name: mes, ingreso: 0, gasto: 0 };
+        estructura[i.toString()] = { name: mes, ingreso: 0, gasto: 0 };
       });
       items.forEach((t) => {
         const mesIndex = new Date(t.fecha).getUTCMonth().toString();
@@ -158,11 +153,6 @@ export default function Grafico({
         }
       });
     } else if (tipoPeriodo === "mensual") {
-      const diasDelMes = new Date(
-        new Date().getFullYear(),
-        new Date().getMonth() + 1,
-        0
-      ).getDate(); // Días reales del mes (aprox para el filtro visual)
       for (let i = 1; i <= 31; i++) {
         estructura[i] = { name: i.toString(), ingreso: 0, gasto: 0 };
       }
@@ -187,21 +177,19 @@ export default function Grafico({
         }
       });
     } else if (tipoPeriodo === "diario") {
-      // Lógica diaria simplificada
-      const hora = "Día";
-      estructura[0] = { name: hora, ingreso: 0, gasto: 0 };
+      estructura[0] = { name: "Día", ingreso: 0, gasto: 0 };
       items.forEach((t) => {
         if (t.tipo === "ingreso") estructura[0].ingreso += t.monto;
         else estructura[0].gasto += t.monto;
       });
     }
-
     return Object.values(estructura).map((d) => ({
       ...d,
       balance: d.ingreso - d.gasto,
     }));
   }, [items, tipoPeriodo]);
 
+  // RENDERIZADO
   return (
     <div className={styles.tarjetaGrafico}>
       <div className={styles.headerGrafico}>
@@ -239,8 +227,8 @@ export default function Grafico({
                           data={datosCategoria}
                           cx="50%"
                           cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
+                          innerRadius={50}
+                          outerRadius={70}
                           paddingAngle={5}
                           dataKey="value"
                         >
@@ -276,7 +264,11 @@ export default function Grafico({
                   </div>
                 </>
               ) : (
-                <p className={styles.vacioTexto}>No hay gastos para mostrar.</p>
+                /* Caso: Hay ingresos pero NO gastos para la torta */
+                <div className={styles.contenedorVacio}>
+                  <span className={styles.iconoVacio}>🤷‍♂️</span>
+                  <p className={styles.vacioTexto}>Solo hay ingresos.</p>
+                </div>
               )}
             </>
           )}
@@ -286,8 +278,8 @@ export default function Grafico({
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={datosComparativos}
-                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-                  onClick={onClick} /* 👈 AQUI CONECTAMOS EL CLICK */
+                  margin={{ top: 5, right: 5, left: -20, bottom: 0 }}
+                  onClick={onClick}
                   style={{ cursor: onClick ? "pointer" : "default" }}
                 >
                   <CartesianGrid
@@ -297,17 +289,17 @@ export default function Grafico({
                   />
                   <XAxis
                     dataKey="name"
-                    tick={{ fill: "var(--text-muted)", fontSize: 12 }}
+                    tick={{ fill: "var(--text-muted)", fontSize: 11 }}
                     axisLine={false}
                     tickLine={false}
                     padding={{
-                      left: tipoPeriodo === "mensual" ? 10 : 40,
-                      right: tipoPeriodo === "mensual" ? 10 : 40,
+                      left: tipoPeriodo === "mensual" ? 5 : 20,
+                      right: tipoPeriodo === "mensual" ? 5 : 20,
                     }}
                     interval={tipoPeriodo === "mensual" ? 2 : 0}
                   />
                   <YAxis
-                    tick={{ fill: "var(--text-muted)", fontSize: 12 }}
+                    tick={{ fill: "var(--text-muted)", fontSize: 11 }}
                     axisLine={false}
                     tickLine={false}
                   />
@@ -320,7 +312,8 @@ export default function Grafico({
                     align="center"
                     content={renderLegend}
                     wrapperStyle={{
-                      paddingTop: "10px",
+                      position: "relative",
+                      marginTop: "10px",
                       width: "100%",
                       left: 0,
                     }}
@@ -330,29 +323,26 @@ export default function Grafico({
                     name="Ingresos"
                     fill="var(--success)"
                     radius={[4, 4, 0, 0]}
-                    barSize={tipoPeriodo === "mensual" ? 10 : 20}
+                    barSize={tipoPeriodo === "mensual" ? 8 : 15}
                   />
                   <Bar
                     dataKey="gasto"
                     name="Gastos"
                     fill="var(--danger)"
                     radius={[4, 4, 0, 0]}
-                    barSize={tipoPeriodo === "mensual" ? 10 : 20}
+                    barSize={tipoPeriodo === "mensual" ? 8 : 15}
                   />
                 </BarChart>
               </ResponsiveContainer>
-              <p className={styles.avisoChart}>
-                {tipoPeriodo === "anual"
-                  ? "Evolución Mensual (Click para ver detalle)"
-                  : tipoPeriodo === "mensual"
-                  ? "Evolución Diaria"
-                  : "Detalle"}
-              </p>
             </div>
           )}
         </div>
       ) : (
-        <p className={styles.vacioTexto}>Sin movimientos.</p>
+        /* 👇 AQUÍ ESTÁ EL CAMBIO PRINCIPAL: El contenedor vacío mantiene la altura */
+        <div className={styles.contenedorVacio}>
+          <span className={styles.iconoVacio}>📉</span>
+          <p className={styles.vacioTexto}>Sin movimientos.</p>
+        </div>
       )}
     </div>
   );
