@@ -1,0 +1,89 @@
+.main { padding: 2rem; max-width: 1200px; margin: 0 auto; min-height: 100vh; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+.title { font-size: 2rem; margin: 0; color: var(--text-main); }
+.subtitle { color: var(--text-muted); margin: 0.2rem 0 0 0; }
+.danger { color: var(--danger); }
+.warning { color: #f59e0b; }
+
+/* TABS */
+.tabs { display: flex; background: var(--input-bg); padding: 0.4rem; border-radius: 1rem; border: 1px solid var(--border); gap: 0.5rem; }
+.tab { flex: 1; border: none; background: transparent; padding: 0.6rem 1.2rem; border-radius: 0.8rem; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.active { background: var(--bg-card); color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+.content { display: flex; flex-direction: column; gap: 1.5rem; animation: fadeIn 0.3s ease-out; }
+.btnAdd { background: var(--accent); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 0.8rem; cursor: pointer; font-weight: 600; align-self: flex-end; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+.empty { text-align: center; color: var(--text-muted); padding: 3rem; grid-column: 1/-1; border: 2px dashed var(--border); border-radius: 1rem; }
+
+/* CARD DEUDA (Préstamos) */
+.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+.cardHeader { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border); padding-bottom: 0.8rem; }
+.cardHeader h3 { margin: 0; font-size: 1.1rem; color: var(--text-main); }
+.badge { font-size: 0.75rem; background: var(--input-bg); padding: 2px 8px; border-radius: 6px; color: var(--text-muted); text-transform: uppercase; }
+.row { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-muted); }
+.row strong { color: var(--text-main); }
+.progressBg { background: var(--input-bg); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 0.5rem; }
+.progressFill { height: 100%; background: var(--success); }
+.btnAction { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 0.5rem; border-radius: 0.6rem; cursor: pointer; margin-top: auto; font-size: 0.85rem; }
+.btnAction:hover { background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: var(--success); }
+
+/* CARD IMPUESTO (Compacta) */
+.cardImpuesto {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 1rem; padding: 1rem 1.2rem;
+    display: flex; justify-content: space-between; align-items: center; transition: transform 0.2s;
+}
+.cardImpuesto:hover { transform: translateY(-2px); border-color: var(--accent); }
+
+.impuestoLeft { display: flex; gap: 1rem; align-items: center; }
+.iconImpuesto { font-size: 1.5rem; background: var(--input-bg); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.impuestoTitle { margin: 0; font-size: 1rem; color: var(--text-main); }
+.impuestoSub { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
+
+.impuestoRight { display: flex; align-items: center; gap: 1rem; }
+.impuestoMonto { font-size: 1.1rem; color: var(--text-main); }
+.btnIconDelete { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; }
+.btnIconDelete:hover { color: var(--danger); }
+
+/* FORMS */
+.form { display: flex; flex-direction: column; gap: 1rem; }
+.input { padding: 0.8rem; border-radius: 0.6rem; border: 1px solid var(--border); background: var(--input-bg); color: var(--text-main); }
+.btnSave { background: var(--accent); color: white; border: none; padding: 1rem; border-radius: 0.8rem; font-weight: bold; cursor: pointer; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ... (Estilos previos) ... */
+
+/* ESTILOS PARA TARJETAS AUTOMÁTICAS (Link) */
+.cardAuto {
+    text-decoration: none;
+    border: 1px solid rgba(37, 99, 235, 0.3); /* Borde azul suave */
+    background: rgba(37, 99, 235, 0.02); /* Fondo apenas azulado */
+    cursor: pointer;
+}
+
+.cardAuto:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.1);
+}
+
+.badgeAuto {
+    font-size: 0.65rem;
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--accent);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: auto;
+    font-style: italic;
+}
+
+/* ... (Resto de estilos igual) ... */

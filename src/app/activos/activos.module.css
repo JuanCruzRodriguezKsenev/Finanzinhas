@@ -1,0 +1,276 @@
+/* --- LAYOUT PRINCIPAL --- */
+.main {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 2rem;
+  margin: 0;
+  color: var(--text-main);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  margin: 0.2rem 0 0 0;
+  font-size: 1rem;
+}
+
+/* Resaltamos la deuda en rojo para alertar */
+.danger {
+  color: var(--danger);
+}
+
+/* --- TABS (Pestañas) --- */
+.tabs {
+  display: flex;
+  background: var(--input-bg);
+  padding: 0.4rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  gap: 0.5rem;
+}
+
+.tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.6rem 1.5rem;
+  border-radius: 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.active {
+  background: var(--bg-card);
+  color: var(--text-main);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* --- CONTENEDORES DE SECCIÓN --- */
+.wrapper {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.deudasSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Botón flotante o alineado para agregar deuda */
+.btnAdd {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+  align-self: flex-end; /* A la derecha */
+  transition: transform 0.2s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.btnAdd:hover {
+  transform: translateY(-2px);
+}
+
+/* --- GRILLA DE DEUDAS --- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 4rem;
+  grid-column: 1 / -1;
+  border: 2px dashed var(--border);
+  border-radius: 1rem;
+  font-style: italic;
+}
+
+/* --- TARJETA DE DEUDA (CARD) --- */
+.deudaCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.deudaCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  border-color: var(--accent);
+}
+
+/* Cabecera de la tarjeta */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 0.8rem;
+}
+
+.cardHeader h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+.acreedor {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  background: var(--input-bg);
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+/* Cuerpo de la tarjeta */
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.row strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+/* Barra de Progreso */
+.progressBg {
+  background: var(--input-bg);
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+  border: 1px solid var(--border);
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--success), #34d399); /* Verde progreso */
+  border-radius: 5px;
+  transition: width 0.5s ease-out;
+}
+
+.cardBody small {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 2px;
+}
+
+/* Botón Eliminar/Saldar */
+.btnDelete {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 0.5rem;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  margin-top: auto; /* Empuja al fondo */
+  transition: all 0.2s;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.btnDelete:hover {
+  background: rgba(16, 185, 129, 0.1); /* Verde suave (Saldar) */
+  color: var(--success);
+  border-color: var(--success);
+}
+
+/* --- FORMULARIOS (Modal) --- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.input {
+  padding: 0.8rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text-main);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  border-color: var(--accent);
+}
+
+.btnSave {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  transition: transform 0.1s;
+}
+
+.btnSave:active {
+  transform: scale(0.98);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .main { padding: 1rem; }
+  .header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .btnAdd { width: 100%; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

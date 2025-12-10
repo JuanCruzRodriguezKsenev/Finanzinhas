@@ -1,79 +1,221 @@
-.tarjetaFormulario {
-    background: var(--bg-card);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--border);
-    margin-bottom: 24px;
-    transition: background-color 0.3s, border-color 0.3s;
+/* CONTENEDOR PRINCIPAL */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* Más aire entre campos */
+  padding: 0.5rem 0;
 }
 
-.tarjetaFormulario h3 { margin-top: 0; color: var(--text-main); }
-
-/* Selector Tipo */
-.selectorTipo {
-    display: flex;
-    background: var(--input-bg);
-    padding: 4px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border);
+/* --- SWITCH TIPO (Gasto/Ingreso) --- */
+.switchContainer {
+  display: flex;
+  background-color: var(--input-bg);
+  padding: 0.3rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--border);
+  margin-bottom: 0.5rem;
 }
 
-.botonTipo {
-    flex: 1; border: none; background: transparent; padding: 8px;
-    border-radius: 8px; font-weight: 600; color: var(--text-muted);
-    cursor: pointer; transition: all 0.2s;
+.switchBtn {
+  flex: 1;
+  padding: 0.6rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0.6rem;
+  transition: all 0.2s;
+  font-size: 0.9rem;
 }
 
-.activoGasto { background: var(--bg-card); color: var(--danger); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-.activoIngreso { background: var(--bg-card); color: var(--success); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.activeGasto {
+  background-color: var(--bg-card); /* O usa var(--danger) con opacidad */
+  color: var(--danger);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
 
-/* Formulario Inputs */
-.form { display: flex; flex-direction: column; gap: 16px; }
-.campo { display: flex; flex-direction: column; gap: 6px; }
-.campo label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
-.filaDoble { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.activeIngreso {
+  background-color: var(--bg-card);
+  color: var(--success);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* --- SECCIÓN PAGO DE DEUDA (El recuadro rojo) --- */
+.debtToggleContainer {
+  background-color: rgba(239, 68, 68, 0.08); /* Rojo muy suave */
+  border: 1px dashed var(--danger);
+  border-radius: 0.8rem;
+  padding: 0.8rem;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s;
+}
+
+.debtLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  color: var(--danger);
+  font-weight: 700;
+  font-size: 0.9rem;
+  width: 100%;
+  user-select: none;
+}
+
+.debtLabel input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: var(--danger);
+  cursor: pointer;
+}
+
+/* Estilos dinámicos cuando se activa deuda */
+.labelHighlight {
+  color: var(--danger) !important;
+  font-weight: 700 !important;
+}
+
+/* --- INPUTS Y SELECTS GENERALES --- */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-left: 0.2rem;
+}
 
 .input, .select {
-    padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;
-    transition: all 0.2s; background: var(--input-bg); color: var(--text-main); width: 100%;
-}
-.input:focus, .select:focus { border-color: var(--accent); outline: none; }
-
-.boton {
-    background-color: var(--text-main); color: var(--bg-main);
-    padding: 14px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer;
-    margin-top: 10px; transition: opacity 0.2s; width: 100%;
-}
-.botonIngreso { background-color: var(--success); color: white; }
-.boton:hover { opacity: 0.9; }
-
-/* Contenedor para alinear Cancelar y Guardar */
-.botonesAccion {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
+  padding: 0.8rem 1rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--border);
+  background-color: var(--input-bg);
+  color: var(--text-main);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  font-family: inherit;
+  
+  /* Arreglo para iOS/Safari */
+  -webkit-appearance: none; 
 }
 
-.botonCancelar {
-    background-color: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    padding: 14px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    flex: 1;
-    transition: all 0.2s;
-}
-.botonCancelar:hover {
-    background-color: var(--input-bg);
-    color: var(--text-main);
+/* 👇 ARREGLO CLAVE: Forzar fondo oscuro en las opciones del select */
+.select option, .select optgroup {
+  background-color: var(--bg-card);
+  color: var(--text-main);
 }
 
-.btnCancelSmall {
-    background: transparent; border: 1px solid var(--border); color: var(--text-muted);
-    border-radius: 0.5rem; cursor: pointer; padding: 0 10px;
+.input:focus, .select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
-.btnCancelSmall:hover { color: var(--danger); border-color: var(--danger); }
+
+/* Input resaltado en rojo (para deuda) */
+.inputHighlight {
+  border-color: var(--danger) !important;
+  background-color: var(--bg-card) !important; /* Fondo más sólido para leer mejor */
+  color: var(--text-main);
+}
+
+/* --- ROW (Para poner Fecha y Método lado a lado) --- */
+.row {
+  display: flex;
+  gap: 1rem;
+}
+
+.row .group {
+  flex: 1;
+}
+
+/* --- INPUT DE MONTO ($) --- */
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.currencySymbol {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+.inputMonto {
+  width: 100%;
+  padding: 0.9rem 1rem 0.9rem 2rem; /* Espacio a la izq para el símbolo */
+  border-radius: 0.8rem;
+  border: 1px solid var(--border);
+  background-color: var(--input-bg);
+  color: var(--text-main);
+  font-size: 1.2rem;
+  font-weight: 700;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.inputMonto:focus {
+  border-color: var(--accent);
+}
+
+/* --- BOTONES DE ACCIÓN (Pie del formulario) --- */
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem; /* Separar del último input */
+}
+
+.btnCancel {
+  flex: 1;
+  padding: 0.9rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-main);
+  border-radius: 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.btnCancel:hover {
+  background-color: var(--input-bg);
+}
+
+.btnSubmit {
+  flex: 2;
+  padding: 0.9rem;
+  border: none;
+  background: var(--accent);
+  color: white;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+  transition: transform 0.1s, opacity 0.2s;
+}
+.btnSubmit:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+.btnSubmit:active {
+  transform: translateY(0);
+}
+
+/* ANIMACIONES */
+.animateFade {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -8,7 +8,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import styles from "./inversiones.module.css";
+import styles from "./portfolio.module.css";
 import { Inversion } from "@/types";
 import InversionCard from "@/components/Inversiones/InversionCard";
 import FormDialog from "@/components/FormDialog/FormDialog";

@@ -1,16 +1,22 @@
 // --- TRANSACCIONES (Movimientos) ---
+// ... (Otros tipos)
+
 export interface Transaccion {
   id?: number;
   monto: number;
   tipo: "ingreso" | "gasto";
   categoria: string;
   concepto: string;
-  fecha: string; // Formato ISO: "YYYY-MM-DD"
-  metodoPago: string; // Ej: "Efectivo", "Visa Galicia", "MercadoPago"
-
-  // Vinculaciones Opcionales
-  tarjetaId?: number; // Si el gasto se hizo con una tarjeta guardada
-  inmuebleId?: number; // Si el gasto es relativo a una propiedad (ej: expensas)
+  fecha: string;
+  metodoPago: string;
+  
+  // Vinculaciones
+  tarjetaId?: number; // Para consumo con tarjeta (YA ESTABA)
+  
+  // 👇 NUEVOS CAMPOS PARA PAGOS
+  esPagoDeuda?: boolean; 
+  deudaId?: number; // ID de la Deuda o Tarjeta que se pagó
+  tipoDeuda?: "prestamo" | "tarjeta"; // Qué tipo de pasivo se canceló
 }
 
 // --- PRESUPUESTOS (Metas Mensuales) ---
@@ -148,4 +154,56 @@ export interface Reserva {
   ubicacion: string;    // Ej: "Caja Fuerte", "MercadoPago", "Binance Earn"
   objetivo: string;     // Ej: "Emergencia", "Viaje", "Auto", "Retiro"
   rendimientoAnual?: number; // % TNA o APY (Ej: 85% en MP, 5% en USDT)
+}
+
+// ... (Mantener Inmueble, Vehiculo, Inversion, Reserva, Tarjeta)
+
+// --- NUEVO: DEUDAS / PASIVOS (Lo que debes) ---
+export interface Deuda {
+  id: number;
+  nombre: string;       // Ej: "Préstamo Personal", "Hipoteca"
+  acreedor: string;     // Ej: "Banco Galicia", "Tío Juan"
+  montoTotal: number;   // Deuda original
+  montoRestante: number;// Lo que falta pagar
+  cuotasRestantes: number;
+  valorCuota: number;
+  tna?: number;         // Tasa de interés
+  vencimiento: string;  // Día del mes
+  moneda: "ARS" | "USD";
+}
+
+// --- NUEVO: CUENTAS POR COBRAR (Activo - Lo que te deben) ---
+export interface PrestamoCobrar {
+  id: number;
+  deudor: string;       // Ej: "Amigo Pepe"
+  monto: number;
+  fechaPrestamo: string;
+  fechaCobroEstimada?: string;
+  estado: "pendiente" | "cobrado" | "incobrable";
+  moneda: "ARS" | "USD";
+}
+
+// ... (Otros tipos)
+
+// --- DEUDAS (Stock) ---
+export interface Deuda {
+  id: number;
+  nombre: string;
+  acreedor: string;
+  montoTotal: number;
+  montoRestante: number;
+  cuotasRestantes: number;
+  valorCuota: number;
+  vencimiento: string;
+  moneda: "ARS" | "USD";
+}
+
+// --- IMPUESTOS (Flujo Mensual) ---
+export interface Impuesto {
+  id: number;
+  concepto: string;       // Ej: "Monotributo Cat H", "IIBB", "Municipal"
+  montoMensual: number;   // Valor de la cuota
+  vencimientoDia: number; // Ej: 20
+  tipo: "nacional" | "provincial" | "municipal";
+  fijo: boolean;          // true = Monotributo, false = IIBB (Variable)
 }

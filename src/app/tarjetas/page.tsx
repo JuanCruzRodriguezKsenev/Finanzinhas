@@ -1,10 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import styles from "./tarjetas.module.css";
-import { Tarjeta, Transaccion } from "@/types";
+import { Tarjeta, Transaccion, Reserva } from "@/types";
 import CreditCard from "@/components/Tarjetas/CreditCard/CreditCard";
 import FormDialog from "@/components/FormDialog/FormDialog";
 import Lista from "@/components/Lista/Lista";
+import Formulario from "@/components/Formulario/Formulario";
 
 const COLORES_TARJETAS = [
   "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)",
@@ -18,16 +19,23 @@ export default function PaginaTarjetas() {
   const [tarjetas, setTarjetas] = useState<Tarjeta[]>([]);
   const [transacciones, setTransacciones] = useState<Transaccion[]>([]);
 
+  // No necesitamos el estado 'reservas' aquí para leer,
+  // leeremos directo del localStorage al guardar para evitar conflictos.
+
   const [tarjetaSeleccionada, setTarjetaSeleccionada] =
     useState<Tarjeta | null>(null);
+
+  // Modals
+  const [showModalEditar, setShowModalEditar] = useState(false);
+  const [showModalPago, setShowModalPago] = useState(false);
   const [tarjetaParaEditar, setTarjetaParaEditar] = useState<Tarjeta | null>(
     null
   );
 
-  // Modal
-  const [showModal, setShowModal] = useState(false);
+  // Switch Pagar/Reservar
+  const [modoPago, setModoPago] = useState<"pagar" | "reservar">("pagar");
 
-  // Form States
+  // Form Tarjeta
   const [nuevoAlias, setNuevoAlias] = useState("");
   const [nuevoBanco, setNuevoBanco] = useState("");
   const [nuevoTipo, setNuevoTipo] = useState<"credito" | "debito">("credito");
@@ -35,10 +43,10 @@ export default function PaginaTarjetas() {
   const [nuevoCierre, setNuevoCierre] = useState("");
   const [nuevoVenc, setNuevoVenc] = useState("");
   const [nuevoLast4, setNuevoLast4] = useState("");
-  // 👇 NUEVO ESTADO PARA MANTENIMIENTO
   const [nuevoMantenimiento, setNuevoMantenimiento] = useState("");
   const [nuevoColor, setNuevoColor] = useState(COLORES_TARJETAS[0]);
 
+  // CARGA DE DATOS
   useEffect(() => {
     const dataCards = localStorage.getItem("finansinho-tarjetas");
     if (dataCards) setTarjetas(JSON.parse(dataCards));
@@ -47,7 +55,6 @@ export default function PaginaTarjetas() {
     if (dataTrans) setTransacciones(JSON.parse(dataTrans));
   }, []);
 
-  // CARGAR DATOS AL EDITAR
   useEffect(() => {
     if (tarjetaParaEditar) {
       setNuevoAlias(tarjetaParaEditar.alias);
@@ -57,45 +64,54 @@ export default function PaginaTarjetas() {
       setNuevoCierre(tarjetaParaEditar.diaCierre?.toString() || "");
       setNuevoVenc(tarjetaParaEditar.diaVencimiento?.toString() || "");
       setNuevoLast4(tarjetaParaEditar.ultimos4);
-      // 👇 CARGAR MANTENIMIENTO
       setNuevoMantenimiento(
         tarjetaParaEditar.costoMantenimiento?.toString() || ""
       );
       setNuevoColor(tarjetaParaEditar.color);
-      setShowModal(true);
+      setShowModalEditar(true);
     }
   }, [tarjetaParaEditar]);
 
-  const resetForm = () => {
+  // LÓGICA FECHAS (Validación)
+  const esPeriodoDePago = (t: Tarjeta | null) => {
+    if (!t || t.tipo !== "credito" || !t.diaCierre || !t.diaVencimiento)
+      return false;
+    const hoy = new Date().getDate();
+    const { diaCierre, diaVencimiento } = t;
+    if (diaVencimiento > diaCierre)
+      return hoy > diaCierre && hoy <= diaVencimiento;
+    return hoy > diaCierre || hoy <= diaVencimiento;
+  };
+
+  // HANDLERS TARJETAS
+  const resetFormTarjeta = () => {
     setNuevoAlias("");
     setNuevoBanco("");
     setNuevoLimite("");
     setNuevoLast4("");
     setNuevoCierre("");
     setNuevoVenc("");
-    setNuevoMantenimiento(""); // Resetear
+    setNuevoMantenimiento("");
     setTarjetaParaEditar(null);
   };
 
-  const abrirModalCrear = () => {
+  const abrirCrearTarjeta = () => {
     setTarjetaParaEditar(null);
-    resetForm();
-    setShowModal(true);
+    resetFormTarjeta();
+    setShowModalEditar(true);
   };
 
-  const cerrarModal = () => {
-    setShowModal(false);
+  const cerrarModalTarjeta = () => {
+    setShowModalEditar(false);
     setTimeout(() => {
       setTarjetaParaEditar(null);
-      resetForm();
+      resetFormTarjeta();
     }, 300);
   };
 
   const guardarTarjeta = (e: React.FormEvent) => {
     e.preventDefault();
     if (!nuevoAlias || !nuevoBanco) return;
-
-    // Objeto común
     const datosComunes = {
       alias: nuevoAlias,
       banco: nuevoBanco,
@@ -104,10 +120,9 @@ export default function PaginaTarjetas() {
       limite: parseFloat(nuevoLimite) || 0,
       diaCierre: parseInt(nuevoCierre) || 1,
       diaVencimiento: parseInt(nuevoVenc) || 10,
-      costoMantenimiento: parseFloat(nuevoMantenimiento) || 0, // 👇 GUARDAR
+      costoMantenimiento: parseFloat(nuevoMantenimiento) || 0,
       color: nuevoColor,
     };
-
     if (tarjetaParaEditar) {
       const actualizada: Tarjeta = { ...tarjetaParaEditar, ...datosComunes };
       const nuevaLista = tarjetas.map((t) =>
@@ -123,8 +138,7 @@ export default function PaginaTarjetas() {
       setTarjetas(nuevaLista);
       localStorage.setItem("finansinho-tarjetas", JSON.stringify(nuevaLista));
     }
-
-    cerrarModal();
+    cerrarModalTarjeta();
   };
 
   const eliminarTarjeta = (id: number) => {
@@ -135,23 +149,76 @@ export default function PaginaTarjetas() {
     if (tarjetaSeleccionada?.id === id) setTarjetaSeleccionada(null);
   };
 
+  // LÓGICA PAGO
+  const registrarPago = (t: Transaccion) => {
+    const nuevaLista = [...transacciones, t];
+    setTransacciones(nuevaLista);
+    localStorage.setItem("finansinho-datos", JSON.stringify(nuevaLista));
+    setShowModalPago(false);
+    alert("Pago registrado con éxito ✅");
+  };
+
+  // --- LÓGICA RESERVA (MEJORADA) ---
+  const guardarReservaDesdeTarjeta = () => {
+    if (!tarjetaSeleccionada) return;
+
+    const monto = calcularConsumo(tarjetaSeleccionada.id);
+
+    if (monto <= 0) {
+      alert("No tienes consumos para reservar.");
+      return;
+    }
+
+    // 1. Leer las reservas actuales directamente del almacenamiento para asegurar datos frescos
+    const reservasActuales: Reserva[] = JSON.parse(
+      localStorage.getItem("finansinho-reservas") || "[]"
+    );
+
+    const nuevaReserva: Reserva = {
+      id: Date.now(),
+      nombre: `Reserva ${tarjetaSeleccionada.alias}`,
+      monto: monto,
+      moneda: "ARS",
+      tipo: "efectivo",
+      ubicacion: "Caja Ahorro / Sobre",
+      objetivo: "Deudas",
+      rendimientoAnual: 0,
+    };
+
+    // 2. Guardar
+    const nuevaLista = [...reservasActuales, nuevaReserva];
+    localStorage.setItem("finansinho-reservas", JSON.stringify(nuevaLista));
+
+    setShowModalPago(false);
+    alert(
+      `¡Listo! Se guardaron $${monto.toLocaleString()} en la sección RESERVAS 🛡️`
+    );
+  };
+
   const calcularConsumo = (idTarjeta: number) => {
-    const tarjeta = tarjetas.find((t) => t.id === idTarjeta);
-    if (!tarjeta) return 0;
     return transacciones
-      .filter((t) => t.metodoPago === tarjeta.alias && t.tipo === "gasto")
+      .filter(
+        (t) =>
+          t.metodoPago === tarjetas.find((x) => x.id === idTarjeta)?.alias &&
+          t.tipo === "gasto"
+      )
       .reduce((acc, t) => acc + t.monto, 0);
   };
 
+  const consumoActualSeleccionada = tarjetaSeleccionada
+    ? calcularConsumo(tarjetaSeleccionada.id)
+    : 0;
   const transaccionesFiltradas = tarjetaSeleccionada
     ? transacciones.filter((t) => t.metodoPago === tarjetaSeleccionada.alias)
     : [];
+
+  const habilitadoParaPagar = esPeriodoDePago(tarjetaSeleccionada);
 
   return (
     <main className={styles.main}>
       <div className={styles.header}>
         <h1>Mis Tarjetas 💳</h1>
-        <button className={styles.btnAdd} onClick={abrirModalCrear}>
+        <button className={styles.btnAdd} onClick={abrirCrearTarjeta}>
           + Nueva Tarjeta
         </button>
       </div>
@@ -173,40 +240,63 @@ export default function PaginaTarjetas() {
         )}
       </div>
 
-      {/* SECCIÓN DETALLE CON INFO DE MANTENIMIENTO */}
       {tarjetaSeleccionada && (
         <div className={styles.detalleSection}>
           <div className={styles.detalleHeader}>
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+                flexWrap: "wrap",
+              }}
+            >
               <h2>{tarjetaSeleccionada.alias}</h2>
-              {/* 👇 BADGE DE MANTENIMIENTO */}
               {tarjetaSeleccionada.costoMantenimiento ? (
-                <span
-                  style={{
-                    fontSize: "0.8rem",
-                    background: "rgba(239, 68, 68, 0.1)",
-                    color: "var(--danger)",
-                    padding: "4px 8px",
-                    borderRadius: "6px",
-                    border: "1px solid rgba(239, 68, 68, 0.2)",
-                  }}
-                >
+                <span className={styles.badgeMantenimiento}>
                   Mantenimiento: $
                   {tarjetaSeleccionada.costoMantenimiento.toLocaleString()}
                 </span>
               ) : null}
             </div>
 
-            {tarjetaSeleccionada.tipo === "credito" && (
-              <div className={styles.fechasClave}>
-                <span className={styles.badgeInfo}>
-                  📅 Cierre: {tarjetaSeleccionada.diaCierre}
-                </span>
-                <span className={styles.badgeDanger}>
-                  ⚠️ Vence: {tarjetaSeleccionada.diaVencimiento}
-                </span>
-              </div>
-            )}
+            <div className={styles.headerActions}>
+              {tarjetaSeleccionada.tipo === "credito" && (
+                <>
+                  <div className={styles.fechasClave}>
+                    <span className={styles.badgeInfo}>
+                      📅 Cierre: {tarjetaSeleccionada.diaCierre}
+                    </span>
+                    <span className={styles.badgeDanger}>
+                      ⚠️ Vence: {tarjetaSeleccionada.diaVencimiento}
+                    </span>
+                  </div>
+
+                  {/* BOTÓN INTELIGENTE */}
+                  {habilitadoParaPagar ? (
+                    <button
+                      className={styles.btnPagar}
+                      onClick={() => {
+                        setModoPago("pagar");
+                        setShowModalPago(true);
+                      }}
+                    >
+                      💸 Pagar Resumen
+                    </button>
+                  ) : (
+                    <button
+                      className={styles.btnReservarOutline}
+                      onClick={() => {
+                        setModoPago("reservar");
+                        setShowModalPago(true);
+                      }}
+                    >
+                      🛡️ Reservar Dinero
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
           </div>
           <Lista
             items={transaccionesFiltradas}
@@ -216,17 +306,17 @@ export default function PaginaTarjetas() {
         </div>
       )}
 
-      {/* FORMULARIO */}
+      {/* MODAL EDITAR */}
       <FormDialog
-        open={showModal}
-        onClose={cerrarModal}
-        title={tarjetaParaEditar ? "Editar Tarjeta ✏️" : "Nueva Tarjeta 💳"}
+        open={showModalEditar}
+        onClose={cerrarModalTarjeta}
+        title={tarjetaParaEditar ? "Editar Tarjeta" : "Nueva Tarjeta"}
       >
         <form className={styles.form} onSubmit={guardarTarjeta}>
           <div className={styles.row}>
             <input
               className={styles.input}
-              placeholder="Alias (ej: Visa Galicia)"
+              placeholder="Alias (ej: Visa)"
               value={nuevoAlias}
               onChange={(e) => setNuevoAlias(e.target.value)}
               required
@@ -239,7 +329,6 @@ export default function PaginaTarjetas() {
               required
             />
           </div>
-
           <div className={styles.row}>
             <select
               className={styles.input}
@@ -257,8 +346,6 @@ export default function PaginaTarjetas() {
               onChange={(e) => setNuevoLast4(e.target.value)}
             />
           </div>
-
-          {/* 👇 INPUT PARA MANTENIMIENTO */}
           <div className={styles.row}>
             <input
               className={styles.input}
@@ -277,7 +364,6 @@ export default function PaginaTarjetas() {
               />
             )}
           </div>
-
           {nuevoTipo === "credito" && (
             <div className={styles.row}>
               <input
@@ -298,10 +384,6 @@ export default function PaginaTarjetas() {
               />
             </div>
           )}
-
-          <label style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
-            Color de la tarjeta
-          </label>
           <div className={styles.colorPicker}>
             {COLORES_TARJETAS.map((c) => (
               <div
@@ -314,11 +396,80 @@ export default function PaginaTarjetas() {
               ></div>
             ))}
           </div>
-
           <button type="submit" className={styles.btnSave}>
             {tarjetaParaEditar ? "Guardar Cambios" : "Guardar Tarjeta"}
           </button>
         </form>
+      </FormDialog>
+
+      {/* MODAL GESTIÓN PAGO */}
+      <FormDialog
+        open={showModalPago}
+        onClose={() => setShowModalPago(false)}
+        title={`Gestionar ${tarjetaSeleccionada?.alias}`}
+      >
+        <div className={styles.switchContainer}>
+          {/* BLOQUEO VISUAL DEL BOTÓN PAGAR SI NO ES FECHA */}
+          <button
+            type="button"
+            className={`${styles.switchBtn} ${
+              modoPago === "pagar" ? styles.activePagar : ""
+            } ${!habilitadoParaPagar ? styles.disabledTab : ""}`}
+            onClick={() => {
+              if (habilitadoParaPagar) setModoPago("pagar");
+              else
+                alert(
+                  `Aún no puedes pagar.\nEl resumen cierra el día ${tarjetaSeleccionada?.diaCierre}.`
+                );
+            }}
+          >
+            💸 Pagar Ahora {!habilitadoParaPagar && "🔒"}
+          </button>
+
+          <button
+            type="button"
+            className={`${styles.switchBtn} ${
+              modoPago === "reservar" ? styles.activeReservar : ""
+            }`}
+            onClick={() => setModoPago("reservar")}
+          >
+            🛡️ Reservar Dinero
+          </button>
+        </div>
+
+        {modoPago === "pagar" && habilitadoParaPagar ? (
+          <Formulario
+            alAgregar={registrarPago}
+            alEditar={() => {}}
+            itemEditar={null}
+            alCancelar={() => setShowModalPago(false)}
+            prefillConcepto={`Pago Resumen ${tarjetaSeleccionada?.alias}`}
+            prefillCategoria="Deudas"
+            prefillMonto={consumoActualSeleccionada}
+          />
+        ) : (
+          <div className={styles.reservaContainer}>
+            <div className={styles.reservaInfo}>
+              <p>¿No puedes pagar todo hoy?</p>
+              <span>
+                Guardaremos este monto en tus <strong>Reservas</strong> para que
+                no lo gastes en otra cosa.
+              </span>
+            </div>
+
+            <div className={styles.reservaMonto}>
+              <span>Monto a Reservar</span>
+              <strong>$ {consumoActualSeleccionada.toLocaleString()}</strong>
+            </div>
+
+            <button
+              className={styles.btnReservar}
+              onClick={guardarReservaDesdeTarjeta}
+            >
+              Crear Reserva
+            </button>
+          </div>
+        )}
       </FormDialog>
     </main>
   );

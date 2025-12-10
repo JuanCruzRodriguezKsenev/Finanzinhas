@@ -1,0 +1,99 @@
+.main {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+    .header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+    }
+}
+
+.title {
+  font-size: 2rem;
+  margin: 0;
+  color: var(--text-main);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  margin: 0.2rem 0 0 0;
+  font-size: 1rem;
+}
+
+.success { color: var(--success); }
+
+/* --- TABS --- */
+.tabs {
+    display: flex;
+    background: var(--input-bg);
+    padding: 0.4rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border);
+    gap: 0.5rem;
+}
+
+.tab {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.8rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.activeTab {
+    background: var(--bg-card);
+    color: var(--text-main);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.badgeCount {
+    font-size: 0.75rem;
+    background: rgba(0,0,0,0.05);
+    padding: 2px 6px;
+    border-radius: 4px;
+    opacity: 0.8;
+}
+
+/* --- WRAPPER PARA LAS VISTAS IMPORTADAS --- */
+/* Esto ayuda a resetear paddings de las páginas importadas */
+.viewWrapper {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Truco CSS: Si no quieres editar los archivos originales, 
+   puedes intentar ocultar sus headers aquí, aunque es sucio */
+.viewWrapper :global(.header) {
+    /* display: none; */ 
+    /* Descomenta si decides no editar los archivos originales y quieres ocultar sus headers via CSS */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

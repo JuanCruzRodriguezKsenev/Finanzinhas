@@ -1,16 +1,30 @@
+/* --- LAYOUT PRINCIPAL --- */
 .main {
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  min-height: 100vh;
 }
 
+/* HEADER */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
+.header h1 {
+  font-size: 2rem;
+  margin: 0;
+  color: var(--text-main);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+/* BOTÓN NUEVA TARJETA */
 .btnAdd {
   background: var(--accent);
   color: white;
@@ -19,27 +33,47 @@
   border-radius: 0.8rem;
   cursor: pointer;
   font-weight: 600;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
-.btnAdd:hover { transform: scale(1.05); }
 
-/* GRID DE TARJETAS */
+.btnAdd:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(37, 99, 235, 0.2);
+}
+
+/* GRILLA DE TARJETAS */
 .walletGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 2rem;
   margin-bottom: 3rem;
+  justify-items: center;
 }
 
-.empty { color: var(--text-muted); font-style: italic; grid-column: 1 / -1; text-align: center; padding: 2rem; }
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-muted);
+  padding: 4rem;
+  border: 2px dashed var(--border);
+  border-radius: 1rem;
+  font-style: italic;
+  width: 100%;
+}
 
-/* SECCIÓN DETALLE */
+/* --- SECCIÓN DETALLE (Abajo de la grilla) --- */
 .detalleSection {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 1.5rem;
   padding: 2rem;
+  margin-bottom: 4rem;
   animation: slideUp 0.3s ease-out;
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
 }
 
 .detalleHeader {
@@ -47,30 +81,243 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
-.fechasClave { display: flex; gap: 1rem; }
-.badgeInfo { background: rgba(59, 130, 246, 0.1); color: #3b82f6; padding: 0.4rem 0.8rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: 600; }
-.badgeDanger { background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 0.4rem 0.8rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: 600; }
+.detalleHeader h2 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
 
-/* FORMULARIO */
-.form { display: flex; flex-direction: column; gap: 1rem; }
+/* Acciones del Header (Fechas + Botón Pagar) */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* BADGES ETIQUETAS */
+.badgeMantenimiento {
+  font-size: 0.8rem;
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  font-weight: 600;
+}
+
+.fechasClave {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.badgeInfo, .badgeDanger {
+  font-size: 0.85rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.badgeInfo { background: var(--input-bg); color: var(--text-muted); border: 1px solid var(--border); }
+.badgeDanger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+
+/* BOTÓN PAGAR (Estilo destacado Verde) */
+.btnPagar {
+  background: var(--success);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  transition: transform 0.2s, background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btnPagar:hover {
+  transform: translateY(-2px);
+  background: #059669; /* Verde más oscuro */
+}
+
+/* --- MODAL: SWITCH DE MODO (Pagar vs Reservar) --- */
+.switchContainer {
+  display: flex;
+  background-color: var(--input-bg);
+  padding: 0.3rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.switchBtn {
+  flex: 1;
+  padding: 0.7rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0.6rem;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.activePagar {
+  background-color: var(--bg-card);
+  color: var(--success);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.activeReservar {
+  background-color: var(--bg-card);
+  color: var(--accent); /* Azul para reserva */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* --- MODAL: PANEL DE RESERVA --- */
+.reservaContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: center;
+  animation: fadeIn 0.3s ease-out;
+  padding: 1rem 0;
+}
+
+.reservaInfo p {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
+
+.reservaInfo span {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.reservaMonto {
+  background: var(--input-bg);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.reservaMonto span { 
+  text-transform: uppercase; 
+  font-size: 0.8rem; 
+  color: var(--text-muted); 
+  letter-spacing: 1px; 
+  font-weight: 600;
+}
+
+.reservaMonto strong { 
+  font-size: 2rem; 
+  color: var(--text-main); 
+  font-weight: 800; 
+  letter-spacing: -1px;
+}
+
+.btnReservar {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+  font-size: 1rem;
+}
+
+.btnReservar:hover { transform: translateY(-2px); }
+.btnReservar:active { transform: scale(0.98); }
+
+/* --- FORMULARIOS GENERALES (Editar Tarjeta) --- */
+.form { display: flex; flex-direction: column; gap: 1.2rem; }
 .row { display: flex; gap: 1rem; }
-.input {
-  flex: 1; padding: 0.8rem; background: var(--input-bg); border: 1px solid var(--border);
-  border-radius: 0.5rem; color: var(--text-main); outline: none;
+
+.input, .select {
+  flex: 1;
+  padding: 0.8rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text-main);
+  outline: none;
+  font-size: 0.95rem;
+  width: 100%;
 }
 .input:focus { border-color: var(--accent); }
 
-.colorPicker { display: flex; gap: 0.8rem; margin-bottom: 1rem; }
-.colorCircle { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s; }
-.colorCircle:hover { transform: scale(1.2); }
-.activeColor { border-color: white; box-shadow: 0 0 0 2px var(--accent); }
-
 .btnSave {
-  background: var(--accent); color: white; border: none; padding: 1rem; border-radius: 0.8rem; font-weight: bold; cursor: pointer;
+  margin-top: 1rem;
+  background: linear-gradient(135deg, var(--accent), #1d4ed8);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: opacity 0.2s;
+}
+.btnSave:hover { opacity: 0.9; }
+
+/* COLOR PICKER */
+.colorPicker { display: flex; gap: 0.8rem; margin-top: 0.5rem; justify-content: center; }
+.colorCircle {
+  width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+  border: 2px solid transparent; transition: transform 0.2s;
+}
+.colorCircle:hover { transform: scale(1.2); }
+.activeColor { border-color: var(--text-main); transform: scale(1.2); box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+
+/* ANIMACIONES */
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .main { padding: 1rem; }
+  .header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .btnAdd { width: 100%; justify-content: center; }
+  
+  .detalleHeader { flex-direction: column; align-items: flex-start; }
+  .headerActions { width: 100%; justify-content: space-between; margin-top: 1rem; flex-direction: column; align-items: stretch; }
+  
+  .btnPagar { width: 100%; justify-content: center; }
+  .fechasClave { width: 100%; justify-content: space-between; }
+  
+  .row { flex-direction: column; gap: 0.8rem; }
+}
+/* ... (Estilos anteriores) ... */
+
+/* Pestaña deshabilitada */
+.disabledTab {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
 }
 
-@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+/* ... */

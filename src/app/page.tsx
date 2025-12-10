@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import styles from "./page.module.css";
-import { Transaccion, PresupuestoMensual } from "@/types";
+import { Transaccion, PresupuestoMensual, Tarjeta } from "@/types";
 
 import Balance from "@/components/Balance/Balance";
 import Formulario from "@/components/Formulario/Formulario";
@@ -11,7 +11,6 @@ import Analisis from "@/components/Analisis/Analisis";
 import FormDialog from "@/components/FormDialog/FormDialog";
 import { obtenerPresupuestoDelMes } from "@/utils/presupuestos";
 
-// 👇 LISTA INICIAL POR DEFECTO
 const METODOS_DEFECTO = [
   "Efectivo 💵",
   "Débito 💳",
@@ -20,21 +19,23 @@ const METODOS_DEFECTO = [
 ];
 
 export default function Home() {
+  // --- ESTADOS DE DATOS ---
   const [listaTransacciones, setListaTransacciones] = useState<Transaccion[]>(
     []
   );
   const [presupuestoActual, setPresupuestoActual] =
     useState<PresupuestoMensual | null>(null);
-
-  // 👇 ESTADO PARA MÉTODOS DE PAGO
   const [metodosPago, setMetodosPago] = useState<string[]>(METODOS_DEFECTO);
+  const [tarjetas, setTarjetas] = useState<Tarjeta[]>([]); // 👈 Para las alertas
 
+  //UI States
   const [itemParaEditar, setItemParaEditar] = useState<Transaccion | null>(
     null
   );
-  const [montado, setMontado] = useState(false);
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [montado, setMontado] = useState(false);
 
+  // --- CARGA INICIAL ---
   useEffect(() => {
     setMontado(true);
 
@@ -45,7 +46,6 @@ export default function Home() {
         const txs = JSON.parse(datosGuardados).map((item: any) => ({
           ...item,
           tipo: item.tipo || "gasto",
-          // Migración: si son datos viejos sin método, ponemos Efectivo
           metodoPago: item.metodoPago || "Efectivo 💵",
         }));
         setListaTransacciones(txs);
@@ -56,33 +56,28 @@ export default function Home() {
 
     // 2. Presupuestos
     const dataPresu = localStorage.getItem("finansinho-presupuestos-v2");
-    let todosPresus: PresupuestoMensual[] = [];
     if (dataPresu) {
       try {
-        todosPresus = JSON.parse(dataPresu);
+        const todosPresus = JSON.parse(dataPresu);
+        setPresupuestoActual(obtenerPresupuestoDelMes(todosPresus, new Date()));
       } catch (e) {}
     }
-    const actual = obtenerPresupuestoDelMes(todosPresus, new Date());
-    setPresupuestoActual(actual);
 
-    // 3. 👇 Cargar Métodos de Pago Personalizados
+    // 3. Métodos de Pago
     const metodosGuardados = localStorage.getItem("finansinho-metodos");
-    if (metodosGuardados) {
-      try {
-        setMetodosPago(JSON.parse(metodosGuardados));
-      } catch (e) {}
-    }
+    if (metodosGuardados) setMetodosPago(JSON.parse(metodosGuardados));
+
+    // 4. Tarjetas (Para alertas)
+    const dataTarjetas = localStorage.getItem("finansinho-tarjetas");
+    if (dataTarjetas) setTarjetas(JSON.parse(dataTarjetas));
   }, []);
 
-  useEffect(() => {
-    if (itemParaEditar) setMostrarModal(true);
-  }, [itemParaEditar]);
-
-  const guardarEnNavegador = (nuevaLista: Transaccion[]) => {
+  // --- PERSISTENCIA ---
+  const guardarCambios = (nuevaLista: Transaccion[]) => {
+    setListaTransacciones(nuevaLista);
     localStorage.setItem("finansinho-datos", JSON.stringify(nuevaLista));
   };
 
-  // 👇 FUNCIÓN PARA GUARDAR UN NUEVO MÉTODO SI NO EXISTE
   const verificarYGuardarMetodo = (nuevoMetodo: string) => {
     if (!metodosPago.includes(nuevoMetodo)) {
       const nuevaLista = [...metodosPago, nuevoMetodo];
@@ -91,94 +86,154 @@ export default function Home() {
     }
   };
 
+  // --- HANDLERS ---
   const agregarTransaccion = (nueva: Transaccion) => {
-    verificarYGuardarMetodo(nueva.metodoPago); // Guardamos el método si es nuevo
+    verificarYGuardarMetodo(nueva.metodoPago);
     const nuevaLista = [...listaTransacciones, nueva];
-    setListaTransacciones(nuevaLista);
-    guardarEnNavegador(nuevaLista);
+    guardarCambios(nuevaLista);
     setMostrarModal(false);
   };
 
   const actualizarTransaccion = (itemActualizado: Transaccion) => {
-    verificarYGuardarMetodo(itemActualizado.metodoPago); // Guardamos el método si es nuevo
+    verificarYGuardarMetodo(itemActualizado.metodoPago);
     const nuevaLista = listaTransacciones.map((item) =>
       item.id === itemActualizado.id ? itemActualizado : item
     );
-    setListaTransacciones(nuevaLista);
-    guardarEnNavegador(nuevaLista);
+    guardarCambios(nuevaLista);
     setItemParaEditar(null);
     setMostrarModal(false);
   };
 
-  // ... (eliminarTransaccion, cerrarModal, filtros... IGUAL QUE ANTES) ...
   const eliminarTransaccion = (id: number) => {
+    if (!confirm("¿Eliminar movimiento?")) return;
     const nuevaLista = listaTransacciones.filter((t) => t.id !== id);
-    setListaTransacciones(nuevaLista);
-    guardarEnNavegador(nuevaLista);
+    guardarCambios(nuevaLista);
     if (itemParaEditar && itemParaEditar.id === id) setItemParaEditar(null);
   };
 
+  // --- CÁLCULOS DINÁMICOS ---
+  const resumenDelMes = useMemo(() => {
+    const hoy = new Date();
+    const mesActual = hoy.getMonth();
+    const anioActual = hoy.getFullYear();
+
+    const transaccionesMes = listaTransacciones.filter((t) => {
+      const [anioStr, mesStr] = t.fecha.split("-");
+      return (
+        parseInt(mesStr) - 1 === mesActual && parseInt(anioStr) === anioActual
+      );
+    });
+
+    const ingresos = transaccionesMes
+      .filter((t) => t.tipo === "ingreso")
+      .reduce((acc, item) => acc + item.monto, 0);
+    const gastos = transaccionesMes
+      .filter((t) => t.tipo === "gasto")
+      .reduce((acc, item) => acc + item.monto, 0);
+
+    return {
+      transacciones: transaccionesMes,
+      ingresos,
+      gastos,
+      balance: ingresos - gastos,
+      nombreMes: new Intl.DateTimeFormat("es-ES", { month: "long" }).format(
+        hoy
+      ),
+      anio: anioActual,
+    };
+  }, [listaTransacciones]);
+
+  // 👇 LÓGICA DE ALERTAS VENCIMIENTO TARJETAS
+  const alertasVencimiento = useMemo(() => {
+    const hoyDia = new Date().getDate();
+    return tarjetas.filter((t) => {
+      if (t.tipo !== "credito" || !t.diaVencimiento) return false;
+      const diasFaltantes = t.diaVencimiento - hoyDia;
+      // Muestra alerta si vence entre hoy y los próximos 5 días
+      return diasFaltantes >= 0 && diasFaltantes <= 5;
+    });
+  }, [tarjetas]);
+
+  const nombreMesCapitalizado =
+    resumenDelMes.nombreMes.charAt(0).toUpperCase() +
+    resumenDelMes.nombreMes.slice(1);
+
+  useEffect(() => {
+    if (itemParaEditar) setMostrarModal(true);
+  }, [itemParaEditar]);
+
   const cerrarModalCompleto = () => {
     setMostrarModal(false);
-    setItemParaEditar(null);
+    setTimeout(() => setItemParaEditar(null), 300);
   };
-
-  const hoy = new Date();
-  const mesActual = hoy.getMonth();
-  const anioActual = hoy.getFullYear();
-  const nombreMes = new Intl.DateTimeFormat("es-ES", { month: "long" }).format(
-    hoy
-  );
-  const nombreMesCapitalizado =
-    nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1);
-
-  const transaccionesDelMes = listaTransacciones.filter((t) => {
-    const [anioStr, mesStr] = t.fecha.split("-");
-    return (
-      parseInt(mesStr) - 1 === mesActual && parseInt(anioStr) === anioActual
-    );
-  });
-
-  const ingresosMensual = transaccionesDelMes
-    .filter((t) => t.tipo === "ingreso")
-    .reduce((acc, item) => acc + item.monto, 0);
-  const gastosMensual = transaccionesDelMes
-    .filter((t) => t.tipo === "gasto")
-    .reduce((acc, item) => acc + item.monto, 0);
-  const balanceTotal = ingresosMensual - gastosMensual;
 
   if (!montado) return null;
 
   return (
     <main className={styles.main}>
-      {/* ... Header ... */}
       <div className={styles.headerTop}>
         <div className={styles.brand}>
           <h1>Dashboard 🏠</h1>
           <p>
-            Resumen de {nombreMesCapitalizado} {anioActual}
+            Resumen de {nombreMesCapitalizado} {resumenDelMes.anio}
           </p>
         </div>
       </div>
 
+      {/* 👇 SECCIÓN DE ALERTAS */}
+      {alertasVencimiento.length > 0 && (
+        <div
+          style={{
+            marginBottom: "1.5rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+          }}
+        >
+          {alertasVencimiento.map((t) => (
+            <div
+              key={t.id}
+              style={{
+                background: "rgba(245, 158, 11, 0.1)",
+                border: "1px solid #f59e0b",
+                borderRadius: "0.8rem",
+                padding: "0.8rem 1rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.8rem",
+                color: "#d97706",
+                fontWeight: 600,
+                fontSize: "0.9rem",
+              }}
+            >
+              <span>🔔</span>
+              <span>
+                Tu tarjeta <strong>{t.alias}</strong> vence el día{" "}
+                {t.diaVencimiento}. ¡Recuerda pagar el resumen!
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className={styles.dashboardGrid}>
         <div className={styles.areaBalance}>
           <Balance
-            total={balanceTotal}
-            ingresos={ingresosMensual}
-            gastos={gastosMensual}
+            total={resumenDelMes.balance}
+            ingresos={resumenDelMes.ingresos}
+            gastos={resumenDelMes.gastos}
           />
         </div>
         <div className={styles.areaAnalisis}>
           <Analisis
             presupuestoActual={presupuestoActual}
-            transaccionesMes={transaccionesDelMes}
+            transaccionesMes={resumenDelMes.transacciones}
             historicoTransacciones={listaTransacciones}
           />
         </div>
         <div className={styles.areaLista}>
           <Lista
-            items={transaccionesDelMes}
+            items={resumenDelMes.transacciones}
             alEliminar={eliminarTransaccion}
             alSeleccionar={setItemParaEditar}
           />
@@ -217,7 +272,7 @@ export default function Home() {
           alEditar={actualizarTransaccion}
           itemEditar={itemParaEditar}
           alCancelar={cerrarModalCompleto}
-          listaMetodosPago={metodosPago} // 👇 PASAMOS LA LISTA AL FORMULARIO
+          listaMetodosPago={metodosPago}
         />
       </FormDialog>
     </main>

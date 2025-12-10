@@ -11,15 +11,10 @@ export default function Navbar() {
 
   const rutas = [
     { nombre: "Dashboard", path: "/", icono: "🏠" },
+    { nombre: "Activos", path: "/activos", icono: "🏛️" },
+    { nombre: "Tarjetas", path: "/tarjetas", icono: "💳" }, // 👈 Vuelve a ser protagonista
+    { nombre: "Pasivos", path: "/pasivos", icono: "📉" },
     { nombre: "Estadísticas", path: "/estadisticas", icono: "📊" },
-    // ... dentro de rutas ...
-    { nombre: "Presupuestos", path: "/presupuestos", icono: "🎯" },
-    // Dentro del array de rutas:
-    { nombre: "Tarjetas", path: "/tarjetas", icono: "💳" },
-    { nombre: "Inmuebles", path: "/inmuebles", icono: "🏠" },
-    { nombre: "Vehículos", path: "/vehiculos", icono: "🚘" },
-    { nombre: "Inversiones", path: "/inversiones", icono: "📈" },
-    { nombre: "Reservas", path: "/reservas", icono: "🏦" },
   ];
 
   return (

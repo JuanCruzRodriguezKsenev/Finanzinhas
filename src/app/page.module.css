@@ -1,58 +1,77 @@
-/* Heredan de globals.css */
-.claro {
-  --bg-main: #f3f4f6; --bg-card: #ffffff; --text-main: #1f2937; --text-muted: #6b7280; --border: #e5e7eb; --input-bg: #f9fafb; --accent: #2563eb; --danger: #ef4444; --success: #10b981;
-}
-.oscuro {
-  --bg-main: #0f172a; --bg-card: #1e293b; --text-main: #f1f5f9; --text-muted: #94a3b8; --border: #334155; --input-bg: #334155; --accent: #3b82f6; --danger: #f87171; --success: #34d399;
-}
+/* ... (Todo lo anterior se mantiene igual) ... */
 
 .main {
-  background-color: var(--bg-main); color: var(--text-main); transition: background-color 0.3s;
-  padding: 1.5rem 2.5rem 6rem 2.5rem; min-height: 100vh; font-family: system-ui, -apple-system, sans-serif;
-  display: flex; flex-direction: column; gap: 1.5rem;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  transition: background-color 0.3s;
+  padding: 2rem;
+  padding-bottom: 6rem; 
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.headerTop { display: flex; justify-content: space-between; align-items: center; }
-.brand h1 { font-size: 1.8rem; margin: 0; color: var(--text-main); font-weight: 800; }
-.brand p { margin: 0.25rem 0 0 0; color: var(--accent); font-size: 0.9rem; font-weight: 600; }
+/* HEADER */
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-/* GRILLA */
+.brand h1 {
+  font-size: 2rem;
+  margin: 0;
+  color: var(--text-main);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.brand p {
+  margin: 0.25rem 0 0 0;
+  color: var(--accent);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* GRILLA (Mobile First: Una columna) */
 .dashboardGrid {
-  display: grid; gap: 1.5rem;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  /* Orden Vertical por defecto */
   grid-template-areas:
     "balance"
     "analisis"
     "lista";
-  grid-template-columns: 1fr;
 }
 
 .areaBalance { grid-area: balance; }
 .areaAnalisis { grid-area: analisis; }
 .areaLista { grid-area: lista; }
 
-/* FAB & MODAL */
+/* FAB */
 .fab {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  width: 4rem;
-  height: 4rem;
+  width: 3.5rem;
+  height: 3.5rem;
   background-color: var(--accent);
   color: white;
   border-radius: 50%;
   border: none;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
   cursor: pointer;
   z-index: 1000;
-  transition: transform 0.2s;
-  
-  /* 👇 TRUCO DE CENTRADO PARA TEXTO */
+  transition: transform 0.2s, background-color 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem; 
-  padding: 0;
-  line-height: 0;     /* Elimina la altura de línea fantasma */
+  font-size: 1.5rem; 
 }
 
 .fab:hover {
@@ -60,6 +79,7 @@
   background-color: #1d4ed8;
 }
 
+/* MODALES */
 .modalOverlay {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
   background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
@@ -68,22 +88,37 @@
 }
 
 .modalContent {
-  background-color: var(--bg-card); padding: 2rem; border-radius: 1.5rem;
-  width: 100%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-  border: 1px solid var(--border); position: relative; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background-color: var(--bg-card); padding: 2rem; border-radius: 1.5rem; width: 100%; max-width: 500px;
+  box-shadow: 0 20px 50px -10px rgba(0,0,0,0.3); border: 1px solid var(--border); position: relative;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btnCloseModal {
-  position: absolute; top: 1rem; right: 1rem; background: transparent; border: none;
-  font-size: 1.2rem; color: var(--text-muted); cursor: pointer; padding: 0.5rem;
-  border-radius: 50%; width: 2.5rem; height: 2.5rem; display: flex; align-items: center; justify-content: center;
+  position: absolute; top: 1rem; right: 1rem; background: transparent; border: 1px solid var(--border);
+  font-size: 1rem; color: var(--text-muted); cursor: pointer; padding: 0; border-radius: 50%; width: 2rem; height: 2rem;
+  display: flex; align-items: center; justify-content: center; transition: all 0.2s;
 }
-.btnCloseModal:hover { background-color: var(--input-bg); color: var(--danger); }
+.btnCloseModal:hover { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); border-color: var(--danger); }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
+/* --- RESPONSIVE DESKTOP (PC) --- */
+@media (min-width: 1024px) {
+  .dashboardGrid {
+    /* Mantenemos 2 columnas para flexibilidad, pero forzamos filas completas */
+    grid-template-columns: 1fr 1fr; 
+    
+    /* 👇 AQUÍ ESTÁ EL CAMBIO: Todo ocupa el ancho completo ("row") */
+    grid-template-areas:
+      "balance balance"
+      "analisis analisis"
+      "lista lista";
+  }
+}
+
+/* --- RESPONSIVE MOBILE --- */
 @media (max-width: 768px) {
-  .main { padding: 1.25rem 1.25rem 6rem 1.25rem; }
-  .fab { bottom: 5.5rem; right: 1.5rem; }
+  .main { padding: 1.5rem; padding-bottom: 7rem; }
+  .fab { bottom: 6rem; right: 1.5rem; }
 }
