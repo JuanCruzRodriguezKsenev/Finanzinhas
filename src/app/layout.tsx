@@ -20,26 +20,26 @@ export default function RootLayout({
     <html lang="es">
       <body className={inter.className}>
         <ThemeProvider>
-          <div style={{ display: "flex" }}>
-            <Navbar />
+          {/* El Navbar tiene position: fixed, así que no afecta el flujo del div de abajo */}
+          <Navbar />
 
-            {/* 👇 CONTENEDOR FLUIDO BASADO EN VARIABLES */}
-            <div
-              style={{
-                flexGrow: 1,
+          <div
+            style={{
+              /* En Desktop: Dejamos margen a la izquierda igual al ancho del sidebar */
+              /* En Móvil: La variable --sidebar-width es 0px (definido en globals.css), así que ocupa todo el ancho */
+              marginLeft: "var(--sidebar-width)",
 
-                /* Magia CSS: Lee la variable global */
-                marginLeft: "var(--sidebar-width)",
+              /* Ancho fluido */
+              width: "auto",
 
-                /* Calcula el ancho restante dinámicamente */
-                width: "calc(100% - var(--sidebar-width))",
+              /* Mínimo alto de pantalla */
+              minHeight: "100vh",
 
-                minHeight: "100vh",
-              }}
-              className="content-wrapper"
-            >
-              {children}
-            </div>
+              /* Transición suave al cambiar de tamaño */
+              transition: "margin-left 0.3s ease",
+            }}
+          >
+            {children}
           </div>
         </ThemeProvider>
       </body>

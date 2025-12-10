@@ -10,7 +10,13 @@ import {
   CartesianGrid,
 } from "recharts";
 import styles from "./inmuebles.module.css";
-import { Inmueble, ContratoAlquiler, GastoFijoConfig, Tasacion } from "@/types";
+import {
+  Inmueble,
+  ContratoAlquiler,
+  GastoFijoConfig,
+  Tasacion,
+  MantenimientoInmueble,
+} from "@/types";
 import PropiedadCard from "@/components/Inmuebles/PropiedadCard";
 import FormDialog from "@/components/FormDialog/FormDialog";
 
@@ -41,7 +47,7 @@ export default function PaginaInmuebles() {
   const [finAlquiler, setFinAlquiler] = useState("");
   const [montoAlquiler, setMontoAlquiler] = useState("");
 
-  // Form Gastos
+  // Form Gastos Fijos
   const [nuevoGastoNombre, setNuevoGastoNombre] = useState("");
   const [nuevoGastoTipo, setNuevoGastoTipo] = useState<"fijo" | "porcentaje">(
     "fijo"
@@ -53,6 +59,14 @@ export default function PaginaInmuebles() {
   const [nuevaTasacionFecha, setNuevaTasacionFecha] = useState(
     new Date().toISOString().split("T")[0]
   );
+
+  // 👇 FORM MANTENIMIENTO (REPARACIONES)
+  const [mantFecha, setMantFecha] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [mantConcepto, setMantConcepto] = useState("");
+  const [mantCosto, setMantCosto] = useState("");
+  const [mantMoneda, setMantMoneda] = useState<"ARS" | "USD">("ARS");
 
   // 1. CARGA
   useEffect(() => {
@@ -67,7 +81,7 @@ export default function PaginaInmuebles() {
     }
   }, [inmuebles]);
 
-  // 3. EFECTO: CARGAR DATOS AL EDITAR (Automático)
+  // 3. CARGAR EDICIÓN
   useEffect(() => {
     if (inmuebleParaEditar) {
       setAlias(inmuebleParaEditar.alias);
@@ -80,7 +94,7 @@ export default function PaginaInmuebles() {
     }
   }, [inmuebleParaEditar]);
 
-  // 4. SCROLL AL DETALLE
+  // 4. SCROLL
   useEffect(() => {
     if (inmuebleSeleccionado && detalleRef.current) {
       setTimeout(() => {
@@ -111,7 +125,7 @@ export default function PaginaInmuebles() {
     );
   }, [inmuebleSeleccionado]);
 
-  // --- HANDLERS ---
+  // --- HANDLERS BASICOS ---
   const resetFormBasic = () => {
     setAlias("");
     setDireccion("");
@@ -154,7 +168,6 @@ export default function PaginaInmuebles() {
         i.id === actualizado.id ? actualizado : i
       );
       setInmuebles(nuevaLista);
-      // Si justo estamos viendo el detalle de este, actualizamos también la vista
       if (inmuebleSeleccionado?.id === actualizado.id)
         setInmuebleSeleccionado(actualizado);
     } else {
@@ -169,6 +182,7 @@ export default function PaginaInmuebles() {
         datosAlquiler: null,
         gastosFijos: [],
         tasaciones: [],
+        mantenimientos: [],
       };
       setInmuebles([...inmuebles, nuevo]);
     }
@@ -248,8 +262,7 @@ export default function PaginaInmuebles() {
       valor: parseFloat(nuevaTasacionValor),
       moneda: inmuebleSeleccionado.moneda,
     };
-    const lista = [...(inmuebleSeleccionado.tasaciones || []), nueva];
-    lista.sort(
+    const lista = [...(inmuebleSeleccionado.tasaciones || []), nueva].sort(
       (a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
     );
     actualizarSeleccionado({ ...inmuebleSeleccionado, tasaciones: lista });
@@ -262,6 +275,34 @@ export default function PaginaInmuebles() {
       (t) => t.id !== idTasacion
     );
     actualizarSeleccionado({ ...inmuebleSeleccionado, tasaciones: lista });
+  };
+
+  // 👇 LÓGICA DE MANTENIMIENTO
+  const agregarMantenimiento = () => {
+    if (!inmuebleSeleccionado || !mantConcepto || !mantCosto) return;
+    const nuevo: MantenimientoInmueble = {
+      id: Date.now(),
+      fecha: mantFecha,
+      concepto: mantConcepto,
+      costo: parseFloat(mantCosto),
+      moneda: mantMoneda,
+    };
+    // Ordenar por fecha (más reciente arriba)
+    const lista = [...(inmuebleSeleccionado.mantenimientos || []), nuevo].sort(
+      (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+    );
+
+    actualizarSeleccionado({ ...inmuebleSeleccionado, mantenimientos: lista });
+    setMantConcepto("");
+    setMantCosto("");
+  };
+
+  const eliminarMantenimiento = (idMant: number) => {
+    if (!inmuebleSeleccionado) return;
+    const lista = (inmuebleSeleccionado.mantenimientos || []).filter(
+      (m) => m.id !== idMant
+    );
+    actualizarSeleccionado({ ...inmuebleSeleccionado, mantenimientos: lista });
   };
 
   const formatMoney = (val: number) => `$${val.toLocaleString()}`;
@@ -289,13 +330,12 @@ export default function PaginaInmuebles() {
             key={item.id}
             data={item}
             onDelete={eliminarInmueble}
-            // 👇 CORRECCIÓN: Usamos el set state directamente, el useEffect hace el resto
             onEdit={setInmuebleParaEditar}
-            onSelect={(item) => {
+            onSelect={(item) =>
               setInmuebleSeleccionado((prev) =>
                 prev?.id === item.id ? null : item
-              );
-            }}
+              )
+            }
             isSelected={inmuebleSeleccionado?.id === item.id}
           />
         ))}
@@ -329,7 +369,7 @@ export default function PaginaInmuebles() {
           </div>
 
           <div className={styles.detalleGrid}>
-            {/* 1. GRÁFICO */}
+            {/* 1. GRÁFICO (FULL WIDTH) */}
             <div className={`${styles.sectionBox} ${styles.boxFullWidth}`}>
               <h4 className={styles.sectionTitle}>
                 📈 Evolución del Valor ({inmuebleSeleccionado.moneda})
@@ -500,7 +540,82 @@ export default function PaginaInmuebles() {
               )}
             </div>
 
-            {/* 3. GASTOS */}
+            {/* 3. MANTENIMIENTO Y REPARACIONES (NUEVO) */}
+            <div className={`${styles.sectionBox} ${styles.boxFullWidth}`}>
+              <h4 className={styles.sectionTitle}>
+                🛠️ Historial de Mantenimiento / Obras
+              </h4>
+              <div className={styles.listaScroll}>
+                {inmuebleSeleccionado.mantenimientos?.map((m) => (
+                  <div key={m.id} className={styles.itemRow}>
+                    <div className={styles.colFecha}>
+                      {new Date(m.fecha).toLocaleDateString()}
+                    </div>
+                    <div className={styles.colInfo}>
+                      <strong>{m.concepto}</strong>
+                    </div>
+                    <div className={styles.colMonto}>
+                      {m.moneda === "USD" ? "USD" : "$"}{" "}
+                      {m.costo.toLocaleString()}
+                    </div>
+                    <button
+                      onClick={() => eliminarMantenimiento(m.id)}
+                      className={styles.btnIconDelete}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                {(!inmuebleSeleccionado.mantenimientos ||
+                  inmuebleSeleccionado.mantenimientos.length === 0) && (
+                  <p className={styles.textMuted}>
+                    Sin registros de mantenimiento.
+                  </p>
+                )}
+              </div>
+
+              <div
+                className={styles.formMini}
+                style={{ flexDirection: "row", marginTop: "1rem" }}
+              >
+                <input
+                  type="date"
+                  className={styles.inputSmall}
+                  value={mantFecha}
+                  onChange={(e) => setMantFecha(e.target.value)}
+                />
+                <input
+                  className={styles.inputSmall}
+                  placeholder="Concepto (Ej: Pintura)"
+                  value={mantConcepto}
+                  onChange={(e) => setMantConcepto(e.target.value)}
+                  style={{ flex: 2 }}
+                />
+                <select
+                  className={styles.inputSmall}
+                  value={mantMoneda}
+                  onChange={(e) => setMantMoneda(e.target.value as any)}
+                >
+                  <option value="ARS">ARS</option>
+                  <option value="USD">USD</option>
+                </select>
+                <input
+                  className={styles.inputSmall}
+                  type="number"
+                  placeholder="Costo"
+                  value={mantCosto}
+                  onChange={(e) => setMantCosto(e.target.value)}
+                />
+                <button
+                  onClick={agregarMantenimiento}
+                  className={styles.btnActionSmall}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* 4. GASTOS FIJOS */}
             <div className={styles.sectionBox}>
               <h4 className={styles.sectionTitle}>💸 Gastos Fijos</h4>
               <div className={styles.listaGastos}>
@@ -559,7 +674,7 @@ export default function PaginaInmuebles() {
         </div>
       )}
 
-      {/* MODAL ALTA/EDICIÓN */}
+      {/* MODAL ALTA (IGUAL QUE ANTES) */}
       <FormDialog
         open={showAltaModal}
         onClose={cerrarModalAlta}

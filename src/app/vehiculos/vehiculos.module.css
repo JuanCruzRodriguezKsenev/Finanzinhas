@@ -31,10 +31,10 @@
 }
 
 .subtitle b {
-  color: var(--success); /* Resalta el patrimonio en verde */
+  color: var(--success);
 }
 
-/* BOTÓN AGREGAR (Primary) */
+/* BOTÓN AGREGAR */
 .btnAdd {
   background: var(--accent);
   color: white;
@@ -44,9 +44,6 @@
   cursor: pointer;
   font-weight: 600;
   transition: transform 0.2s, box-shadow 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
 .btnAdd:hover {
@@ -81,7 +78,7 @@
   margin-top: 1rem;
   margin-bottom: 4rem;
   animation: slideUp 0.3s ease-out;
-  scroll-margin-top: 2rem; /* Margen para el scroll automático */
+  scroll-margin-top: 2rem;
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.2);
 }
 
@@ -132,12 +129,12 @@
   gap: 1.5rem;
 }
 
-/* Elementos que ocupan todo el ancho (Gráfico) */
+/* Elementos que ocupan todo el ancho (Mantenimiento) */
 .boxFullWidth {
   grid-column: 1 / -1;
 }
 
-/* CAJAS DE SECCIÓN (Contenedores internos) */
+/* CAJAS DE SECCIÓN */
 .sectionBox {
   background: var(--input-bg);
   padding: 1.5rem;
@@ -159,53 +156,66 @@
   font-weight: 700;
 }
 
-/* GRÁFICO Y TASACIONES */
-.chartContainer {
-  margin-bottom: 1rem;
-  background: var(--bg-card);
-  border-radius: 0.8rem;
-  padding: 1rem;
-  border: 1px solid var(--border);
-}
-
-.tasacionesList {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-}
-
-/* Scrollbar fina para la lista horizontal */
-.tasacionesList::-webkit-scrollbar { height: 6px; }
-.tasacionesList::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-.itemTasacion {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: var(--bg-card);
-  padding: 0.5rem 1rem;
-  border-radius: 0.6rem;
-  font-size: 0.85rem;
-  border: 1px solid var(--border);
-  min-width: 100px;
-  position: relative;
-}
-
-.itemTasacion span { color: var(--text-muted); font-size: 0.75rem; }
-.itemTasacion strong { color: var(--success); font-size: 0.95rem; }
-
-/* LISTAS DE GASTOS (Vertical) */
-.listaGastos {
+/* --- LISTAS DE MANTENIMIENTO --- */
+.listaScroll {
+  max-height: 250px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  padding-right: 5px;
+  margin-bottom: 1rem;
 }
 
-.itemGasto {
+/* Scrollbar fina */
+.listaScroll::-webkit-scrollbar { width: 6px; }
+.listaScroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.itemRow {
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 0.6rem 1rem;
+  border-radius: 0.6rem;
+  font-size: 0.9rem;
+  gap: 1rem;
+}
+
+.colFecha {
+  width: 90px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.colInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.subtext {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.colMonto {
+  font-weight: 700;
+  color: var(--text-main);
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+/* --- LISTA GASTOS SIMPLES --- */
+.listaSimple {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.itemSimple {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -217,20 +227,38 @@
   font-weight: 500;
 }
 
-/* Botón "X" pequeño para eliminar ítems */
-.btnIconDelete {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 1.2rem;
-  padding: 0 0.5rem;
-  line-height: 1;
-  transition: color 0.2s;
+/* --- TARJETAS DE RESUMEN (INFO EXTRA) --- */
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
 }
-.btnIconDelete:hover { color: var(--danger); }
 
-/* --- FORMULARIOS (Alta, Edición y Mini-Forms) --- */
+.infoCard {
+  background: var(--bg-card);
+  padding: 1rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.infoCard span {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+  letter-spacing: 0.5px;
+}
+
+.infoCard strong {
+  font-size: 1.1rem;
+  color: var(--text-main);
+}
+
+/* --- FORMULARIOS --- */
 .form {
   display: flex;
   flex-direction: column;
@@ -242,7 +270,7 @@
   flex-direction: column;
   gap: 0.8rem;
   padding-top: 0.5rem;
-  margin-top: auto; /* Empuja hacia abajo en flex container */
+  margin-top: auto;
 }
 
 .row {
@@ -264,7 +292,7 @@
   margin-left: 2px;
 }
 
-/* Inputs Grandes (Modal Principal) */
+/* Inputs */
 .input {
   padding: 0.8rem;
   background: var(--input-bg);
@@ -278,7 +306,6 @@
 }
 .input:focus { border-color: var(--accent); }
 
-/* Inputs Pequeños (Detalle) */
 .inputSmall {
   flex: 1;
   padding: 0.6rem 0.8rem;
@@ -288,11 +315,11 @@
   background: var(--bg-card);
   color: var(--text-main);
   outline: none;
-  min-width: 0; /* Evita desbordes en flex */
+  min-width: 0;
 }
 .inputSmall:focus { border-color: var(--accent); }
 
-/* BOTONES */
+/* Botones */
 .btnSave {
   margin-top: 1rem;
   background: linear-gradient(135deg, var(--accent), #1d4ed8);
@@ -319,22 +346,18 @@
   align-self: flex-end;
 }
 
-.btnDangerOutline {
+.btnIconDelete {
   background: transparent;
-  border: 1px solid var(--danger);
-  color: var(--danger);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  border: none;
+  color: var(--text-muted);
   cursor: pointer;
-  font-size: 0.8rem;
-  margin-top: 1rem;
-  width: 100%;
-  font-weight: 600;
-  transition: background 0.2s;
+  font-size: 1.2rem;
+  padding: 0 0.5rem;
+  line-height: 1;
+  transition: color 0.2s;
 }
-.btnDangerOutline:hover { background: rgba(239, 68, 68, 0.1); }
+.btnIconDelete:hover { color: var(--danger); }
 
-/* TEXTOS AUXILIARES */
 .textMuted {
   font-size: 0.9rem;
   color: var(--text-muted);
@@ -342,17 +365,6 @@
   margin-bottom: 1rem;
   text-align: center;
 }
-
-/* INFO ALQUILER ACTIVO */
-.infoAlquiler {
-  background: var(--bg-card);
-  padding: 1rem;
-  border-radius: 0.8rem;
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--success);
-}
-.infoAlquiler p { margin: 0.4rem 0; font-size: 0.95rem; color: var(--text-main); }
-.infoAlquiler strong { color: var(--text-muted); margin-right: 0.5rem; }
 
 /* ANIMACIONES Y RESPONSIVE */
 @keyframes slideUp { 
@@ -366,55 +378,4 @@
   .btnAdd { width: 100%; justify-content: center; }
   .row { flex-direction: column; gap: 0.8rem; }
   .detalleSection { padding: 1rem; }
-  .tasacionesList { flex-wrap: nowrap; } /* Mantiene scroll horizontal en móvil */
 }
-
-/* ... (Estilos anteriores) ... */
-
-/* LISTA CON SCROLL (Para Mantenimiento) */
-.listaScroll {
-  max-height: 200px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding-right: 5px;
-  margin-bottom: 1rem;
-}
-
-.listaScroll::-webkit-scrollbar { width: 6px; }
-.listaScroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-/* FILA DE MANTENIMIENTO */
-.itemRow {
-  display: flex;
-  align-items: center;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  padding: 0.6rem 1rem;
-  border-radius: 0.6rem;
-  font-size: 0.9rem;
-  gap: 1rem;
-}
-
-.colFecha {
-  width: 90px;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-
-.colInfo {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.colMonto {
-  font-weight: 700;
-  color: var(--text-main);
-  font-family: monospace;
-  font-size: 1rem;
-}
-
-/* ... (Resto de estilos) ... */

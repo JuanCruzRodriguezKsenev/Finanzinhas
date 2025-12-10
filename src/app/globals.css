@@ -1,3 +1,5 @@
+/* src/app/globals.css */
+
 /* --- 1. RESET BÁSICO --- */
 * {
   box-sizing: border-box;
@@ -7,8 +9,9 @@
 
 /* --- 2. DEFINICIÓN DE VARIABLES GLOBALES --- */
 :root {
-  /* DIMENSIONES MAESTRAS (Para usar en Navbar y Layout) */
-  --sidebar-width: 13rem; /* Aprox 208px */
+  /* DIMENSIONES MAESTRAS (Controlan el Layout) */
+  --sidebar-width: 16rem; /* Ancho del menú lateral en PC */
+  --navbar-mobile-height: 4.5rem; /* Alto de la barra en móvil */
 
   /* COLORES BASE (Default / Fallback) */
   --bg-main: #f3f4f6;
@@ -21,9 +24,9 @@
   --danger: #ef4444;
   --success: #10b981;
   
-  /* Navbar */
-  --nav-bg: rgba(255, 255, 255, 0.85);
-  --nav-border: rgba(0, 0, 0, 0.05);
+  /* Navbar Desktop */
+  --nav-bg: #ffffff;
+  --nav-border: #e5e7eb;
 }
 
 /* --- 3. TEMAS (Clases controladas por ThemeContext) --- */
@@ -39,8 +42,8 @@ body.claro {
   --accent: #2563eb;
   --danger: #ef4444;
   --success: #10b981;
-  --nav-bg: rgba(255, 255, 255, 0.85);
-  --nav-border: rgba(0, 0, 0, 0.05);
+  --nav-bg: #ffffff;
+  --nav-border: #e5e7eb;
 }
 
 /* Tema Oscuro */
@@ -54,8 +57,8 @@ body.oscuro {
   --accent: #3b82f6;
   --danger: #f87171;
   --success: #34d399;
-  --nav-bg: rgba(15, 23, 42, 0.85);
-  --nav-border: rgba(255, 255, 255, 0.1);
+  --nav-bg: #1e293b;
+  --nav-border: #334155;
 }
 
 /* --- 4. ESTILOS BASE DEL CUERPO --- */
@@ -76,6 +79,8 @@ body {
   
   /* Transición suave al cambiar de tema */
   transition: background-color 0.3s, color 0.3s;
+  
+  min-height: 100vh;
 }
 
 a {
@@ -91,25 +96,24 @@ button {
   font-family: inherit;
 }
 
-/* --- 5. RESPONSIVE (LAYOUT WRAPPER) --- */
-/* Esto controla el div que empuja el contenido cuando la barra cambia */
+/* --- 5. LÓGICA RESPONSIVA (Layout Wrapper) --- */
+/* Aquí ocurre la magia: cambiamos el valor de la variable en móvil */
 
 @media (max-width: 768px) {
-  .content-wrapper {
-    /* En móvil, anulamos el margen izquierdo porque la barra baja */
-    margin-left: 0 !important;
-    width: 100% !important;
-    
-    /* Agregamos padding abajo para que la barra inferior no tape el contenido */
-    padding-bottom: 6rem; 
+  :root {
+    /* En móvil, el sidebar NO ocupa espacio lateral */
+    --sidebar-width: 0px; 
+  }
+
+  body {
+    /* Agregamos espacio abajo para que la barra inferior (móvil) no tape el contenido */
+    padding-bottom: var(--navbar-mobile-height);
   }
 }
 
-/* src/app/globals.css */
+/* --- 6. UTILIDADES DE FORMULARIOS --- */
 
-/* ... (tu código anterior) ... */
-
-/* 👇 ELIMINAR FLECHAS DE INPUTS NUMÉRICOS */
+/* Eliminar flechas de inputs numéricos */
 /* Chrome, Safari, Edge, Opera */
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button {
@@ -122,35 +126,33 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-/* ... (Todo tu código anterior) ... */
-
-/* --- PERSONALIZACIÓN DE SCROLLBAR (Para todo el sitio) --- */
+/* --- 7. PERSONALIZACIÓN DE SCROLLBAR --- */
 
 /* 1. Ancho de la barra */
 ::-webkit-scrollbar {
-  width: 8px; /* Más fina (estándar es 17px) */
-  height: 8px; /* Para scroll horizontal */
+  width: 8px; /* Más fina */
+  height: 8px; /* Horizontal */
 }
 
-/* 2. El "carril" o fondo de la barra */
+/* 2. Fondo de la barra */
 ::-webkit-scrollbar-track {
-  background: transparent; /* Invisible para que se vea el fondo de la tarjeta */
+  background: transparent; 
 }
 
-/* 3. El "pulgar" o la barra que se mueve */
+/* 3. La barra que se mueve (Thumb) */
 ::-webkit-scrollbar-thumb {
-  background-color: var(--border); /* Usa el color de tus bordes (sutil) */
-  border-radius: 4px; /* Bordes redondos */
-  border: 2px solid transparent; /* Espacio para que parezca "flotando" */
+  background-color: var(--border);
+  border-radius: 4px;
+  border: 2px solid transparent; /* Espacio para efecto flotante */
   background-clip: content-box;
 }
 
-/* 4. Al pasar el mouse por encima */
+/* 4. Hover */
 ::-webkit-scrollbar-thumb:hover {
-  background-color: var(--text-muted); /* Se oscurece un poco para indicar interacción */
+  background-color: var(--text-muted);
 }
 
-/* Para Firefox (Soporte más limitado pero funcional) */
+/* Firefox */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;

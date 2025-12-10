@@ -24,16 +24,21 @@ export interface PresupuestoMensual {
 }
 
 // --- TARJETAS (Billetera) ---
+// ... (Otras interfaces)
+
 export interface Tarjeta {
   id: number;
-  alias: string; // Ej: "Visa Galicia"
-  banco: string; // Ej: "Galicia", "Santander"
+  alias: string;
+  banco: string;
   tipo: "credito" | "debito";
-  ultimos4: string; // Para mostrar en la tarjeta visual (ej: "4589")
-  limite: number; // Límite de compra (Solo crédito)
-  diaCierre?: number; // Día del mes (Ej: 28)
-  diaVencimiento?: number; // Día del mes (Ej: 10)
-  color: string; // Gradiente CSS para el fondo de la tarjeta
+  ultimos4: string;
+  limite: number;
+  diaCierre?: number;
+  diaVencimiento?: number;
+  color: string;
+  
+  // 👇 NUEVO CAMPO
+  costoMantenimiento?: number; // Costo mensual fijo
 }
 
 // --- SUB-TIPOS PARA INMUEBLES ---
@@ -61,17 +66,73 @@ export interface Tasacion {
 }
 
 // --- INMUEBLES (Patrimonio) ---
+// ... (Otras interfaces)
+
+export interface MantenimientoInmueble {
+  id: number;
+  fecha: string;        // YYYY-MM-DD
+  concepto: string;     // Ej: "Pintura completa", "Arreglo baño"
+  costo: number;
+  moneda: "ARS" | "USD";
+}
+
 export interface Inmueble {
   id: number;
-  alias: string; // Ej: "Depto Centro", "Casa Quinta"
+  alias: string;
   direccion: string;
   tipo: "casa" | "departamento" | "terreno" | "local" | "cochera";
-  fechaAdquisicion: string; // Formato "YYYY-MM-DD"
+  fechaAdquisicion: string;
   valorCompra: number;
-  moneda: "USD" | "ARS"; // Moneda de valuación
-
-  // Datos Opcionales (Gestión Avanzada)
-  datosAlquiler?: ContratoAlquiler | null;
+  moneda: "USD" | "ARS";
+  
+  // Datos Opcionales
+  datosAlquiler?: ContratoAlquiler | null; 
   gastosFijos?: GastoFijoConfig[];
-  tasaciones?: Tasacion[]; // Historial de valor
+  tasaciones?: Tasacion[];
+  
+  // 👇 NUEVO CAMPO
+  mantenimientos?: MantenimientoInmueble[];
+}
+
+// ... (Mantén las interfaces anteriores: Transaccion, Tarjeta, Inmueble, etc.)
+
+// --- SUB-TIPOS PARA VEHÍCULOS ---
+export interface Mantenimiento {
+  id: number;
+  fecha: string;        // YYYY-MM-DD
+  concepto: string;     // Ej: "Cambio de Aceite", "Cubiertas Nuevas"
+  kilometraje: number;  // Ej: 45000
+  costo: number;
+  moneda: "ARS" | "USD";
+}
+
+// --- VEHÍCULOS (Patrimonio + Gastos) ---
+export interface Vehiculo {
+  id: number;
+  alias: string;        // Ej: "El Golcito", "Moto Honda"
+  tipo: "auto" | "moto" | "camioneta" | "otro";
+  marca: string;        // Ej: "Volkswagen"
+  modelo: string;       // Ej: "Gol Trend"
+  anio: number;         // Ej: 2018
+  patente: string;      // Ej: "AD 123 CD"
+  valorEstimado: number;
+  moneda: "USD" | "ARS";
+  
+  // Detalles Opcionales
+  gastosFijos?: GastoFijoConfig[]; // (Reusamos el tipo de Inmuebles para Seguro/Patente)
+  mantenimientos?: Mantenimiento[];
+}
+
+// ... (Otros tipos)
+
+// --- INVERSIONES (Portafolio) ---
+export interface Inversion {
+  id: number;
+  ticket: string;       // Ej: AAPL, BTC, AL30
+  nombre: string;       // Ej: Apple, Bitcoin
+  tipo: "accion" | "cedear" | "crypto" | "bono" | "fci" | "pf";
+  cantidad: number;     // Ej: 10.5
+  precioCompra: number; // Precio promedio de compra (Unitario)
+  precioActual: number; // Precio de mercado actual (Unitario) - Manual por ahora
+  moneda: "USD" | "ARS";
 }
