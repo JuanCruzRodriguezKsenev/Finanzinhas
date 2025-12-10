@@ -1,0 +1,44 @@
+.card {
+  width: 100%;
+  max-width: 380px;
+  height: 220px;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 20px -5px rgba(0,0,0,0.3);
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  overflow: hidden;
+  border: 2px solid transparent;
+}
+
+.selected {
+  transform: scale(1.02);
+  box-shadow: 0 15px 30px -5px rgba(0,0,0,0.4);
+  border-color: white;
+}
+
+.topRow { display: flex; justify-content: space-between; align-items: flex-start; }
+.banco { font-weight: 800; letter-spacing: 1px; text-transform: uppercase; font-size: 1.1rem; }
+.btnDelete { background: rgba(0,0,0,0.2); border: none; color: white; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+.btnDelete:hover { background: rgba(255, 59, 59, 0.8); }
+
+.chipRow { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.chip { width: 40px; height: 30px; background: linear-gradient(135deg, #e2e2e2 0%, #b8b8b8 100%); border-radius: 6px; position: relative; overflow: hidden; border: 1px solid rgba(0,0,0,0.1); }
+.contactless { font-size: 1.2rem; transform: rotate(90deg); opacity: 0.7; }
+
+.numberRow { font-family: monospace; font-size: 1.4rem; letter-spacing: 2px; display: flex; gap: 1rem; text-shadow: 0 2px 2px rgba(0,0,0,0.3); }
+
+.footerRow { display: flex; justify-content: space-between; margin-top: auto; }
+.infoGroup { display: flex; flex-direction: column; }
+.label { font-size: 0.6rem; text-transform: uppercase; opacity: 0.8; margin-bottom: 2px; }
+.value { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
+
+/* BARRA DE LÍMITE */
+.limitBar { margin-top: 1rem; background: rgba(0,0,0,0.3); height: 6px; border-radius: 4px; position: relative; }
+.limitFill { height: 100%; background: white; border-radius: 4px; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+.limitText { position: absolute; right: 0; top: -18px; font-size: 0.7rem; font-weight: bold; opacity: 0.9; }

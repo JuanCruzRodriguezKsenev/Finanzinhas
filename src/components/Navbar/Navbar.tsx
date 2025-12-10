@@ -14,6 +14,8 @@ export default function Navbar() {
     { nombre: "Estadísticas", path: "/estadisticas", icono: "📊" },
     // ... dentro de rutas ...
     { nombre: "Presupuestos", path: "/presupuestos", icono: "🎯" },
+    // Dentro del array de rutas:
+    { nombre: "Tarjetas", path: "/tarjetas", icono: "💳" },
   ];
 
   return (
