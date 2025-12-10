@@ -136,3 +136,16 @@ export interface Inversion {
   precioActual: number; // Precio de mercado actual (Unitario) - Manual por ahora
   moneda: "USD" | "ARS";
 }
+
+// ... (Otras interfaces)
+
+export interface Reserva {
+  id: number;
+  nombre: string;       // Ej: "Ahorro Dólar Billete", "Fondo Emergencia"
+  monto: number;
+  moneda: "ARS" | "USD" | "USDT" | "EUR";
+  tipo: "efectivo" | "banco" | "billetera" | "crypto"; 
+  ubicacion: string;    // Ej: "Caja Fuerte", "MercadoPago", "Binance Earn"
+  objetivo: string;     // Ej: "Emergencia", "Viaje", "Auto", "Retiro"
+  rendimientoAnual?: number; // % TNA o APY (Ej: 85% en MP, 5% en USDT)
+}

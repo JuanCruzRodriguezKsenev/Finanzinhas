@@ -1,0 +1,64 @@
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  border-color: var(--accent);
+}
+
+/* HEADER */
+.header { display: flex; align-items: center; gap: 0.8rem; }
+.iconBox { 
+    font-size: 1.5rem; background: var(--input-bg); width: 45px; height: 45px; 
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+}
+.titleBox { flex: 1; display: flex; flex-direction: column; }
+.nombre { font-weight: 700; font-size: 1rem; color: var(--text-main); }
+.ubicacion { font-size: 0.8rem; color: var(--text-muted); }
+
+.badgeObjetivo {
+    font-size: 0.7rem; background: rgba(37, 99, 235, 0.1); color: var(--accent);
+    padding: 2px 8px; border-radius: 6px; font-weight: 600; text-transform: uppercase;
+}
+
+/* BODY */
+.body { display: flex; align-items: baseline; gap: 0.4rem; padding: 0.5rem 0; }
+.moneda { font-size: 1rem; font-weight: 600; color: var(--text-muted); }
+.monto { font-size: 1.8rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+
+/* FOOTER (RENDIMIENTO) */
+.footer {
+    border-top: 1px dashed var(--border);
+    padding-top: 0.8rem;
+}
+
+.rendimientoBox {
+    display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;
+}
+.tna { color: var(--text-main); font-weight: 600; }
+.ganancia { color: var(--success); font-weight: 700; }
+
+.sinRendimiento {
+    font-size: 0.8rem; color: var(--text-muted); font-style: italic; text-align: center;
+}
+
+.btnDelete {
+    position: absolute; top: 10px; right: 10px;
+    background: transparent; border: none; color: var(--text-muted);
+    font-size: 1rem; cursor: pointer; width: 24px; height: 24px; opacity: 0; transition: opacity 0.2s;
+}
+.card:hover .btnDelete { opacity: 1; }
+.btnDelete:hover { color: var(--danger); }

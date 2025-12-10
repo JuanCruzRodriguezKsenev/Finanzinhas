@@ -1,0 +1,52 @@
+.main { padding: 2rem; max-width: 1200px; margin: 0 auto; min-height: 100vh; }
+
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.title { font-size: 2rem; margin: 0; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; }
+
+.btnAdd {
+  background: var(--accent); color: white; border: none; padding: 0.8rem 1.5rem;
+  border-radius: 0.8rem; cursor: pointer; font-weight: 600; transition: transform 0.2s;
+}
+.btnAdd:hover { transform: scale(1.02); }
+
+/* DASHBOARD TOTALES */
+.totalesGrid {
+    display: flex; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap;
+}
+
+.totalCard {
+    background: var(--bg-card); padding: 1rem 1.5rem; border-radius: 1rem; border: 1px solid var(--border);
+    display: flex; flex-direction: column; min-width: 150px;
+}
+.totalCard span { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.3rem; }
+.totalCard strong { font-size: 1.4rem; color: var(--text-main); font-weight: 800; }
+
+/* GRILLA */
+.grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;
+}
+.empty { color: var(--text-muted); text-align: center; grid-column: 1 / -1; padding: 4rem; border: 2px dashed var(--border); border-radius: 1rem; }
+
+/* FORMULARIOS */
+.form { display: flex; flex-direction: column; gap: 1.2rem; }
+.row { display: flex; gap: 1rem; }
+.group { flex: 1; display: flex; flex-direction: column; gap: 0.4rem; }
+.label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-left: 2px; }
+.input {
+  padding: 0.8rem; background: var(--input-bg); border: 1px solid var(--border);
+  border-radius: 0.6rem; color: var(--text-main); outline: none; width: 100%; font-size: 0.95rem;
+}
+.input:focus { border-color: var(--accent); }
+.hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; font-style: italic; }
+
+.btnSave {
+  margin-top: 1rem; background: linear-gradient(135deg, var(--accent), #1d4ed8);
+  color: white; border: none; padding: 1rem; border-radius: 0.8rem; font-weight: bold; cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .main { padding: 1rem; }
+    .header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .btnAdd { width: 100%; }
+    .totalesGrid { display: grid; grid-template-columns: 1fr 1fr; }
+}

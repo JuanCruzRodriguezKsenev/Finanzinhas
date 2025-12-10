@@ -1,58 +1,124 @@
-/* --- YA NO DEFINIMOS VARIABLES AQUÍ (Vienen de globals.css) --- */
-
-/* --- LAYOUT PRINCIPAL --- */
 .main {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
   min-height: 100vh;
-  /* Usamos las variables globales directamente */
-  background-color: var(--bg-main);
+}
+
+.header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 2rem;
   color: var(--text-main);
-  
-  /* Padding ajustado para la Navbar lateral: 
-     Arriba/Abajo: 1.5rem (24px)
-     Derecha: 2.5rem (40px)
-     Izquierda: 2.5rem (40px) 
-  */
-  padding: 1.5rem 2.5rem; 
-  
-  font-family: system-ui, -apple-system, sans-serif;
-  transition: background-color 0.3s, color 0.3s;
+  margin-bottom: 0.5rem;
 }
 
-/* --- BARRA SUPERIOR --- */
-.topBar {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem; /* 20px */
-  margin-bottom: 1.5rem; /* 24px */
-  max-width: 75rem; /* 1200px */
-  margin-left: auto;
-  margin-right: auto;
+.subtitle {
+  color: var(--text-muted);
 }
 
-.topBar h1 {
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: 800;
-}
-
-/* --- GRILLA DASHBOARD (2x2) --- */
-.gridDashboard {
+/* KPI GRID */
+.kpiGrid {
   display: grid;
-  /* En escritorio: 2 columnas iguales */
-  grid-template-columns: repeat(2, 1fr); 
-  /* Separación entre tarjetas */
-  gap: 1.5rem; /* 24px */
-  max-width: 75rem; /* 1200px */
-  margin: 0 auto; 
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
 }
 
-/* En tablets/celulares: 1 sola columna */
-@media (max-width: 56.25rem) { /* 900px */
-  .gridDashboard {
-    grid-template-columns: 1fr;
-  }
-  
-  .main {
-    padding: 1.25rem; /* 20px */
-  }
+.kpiCard {
+  background: var(--bg-card);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.kpiCard h3 {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.kpiValue {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 0.2rem;
+}
+
+.kpiSub {
+  font-size: 0.8rem;
+  color: var(--accent);
+  background: rgba(37, 99, 235, 0.1);
+  padding: 2px 8px;
+  border-radius: 1rem;
+}
+
+/* CHART GRID */
+.chartGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.chartBox {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.boxTitle {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-main);
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 0.8rem;
+}
+
+/* CATEGORIAS */
+.catGrid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2rem;
+}
+
+.catList {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  min-width: 250px;
+}
+
+.catItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.8rem;
+  background: var(--input-bg);
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+@media (max-width: 768px) {
+  .main { padding: 1rem; }
+  .chartGrid { grid-template-columns: 1fr; }
+  .catGrid { flex-direction: column; }
 }

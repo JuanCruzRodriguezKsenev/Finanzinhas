@@ -19,6 +19,7 @@ export default function Navbar() {
     { nombre: "Inmuebles", path: "/inmuebles", icono: "🏠" },
     { nombre: "Vehículos", path: "/vehiculos", icono: "🚘" },
     { nombre: "Inversiones", path: "/inversiones", icono: "📈" },
+    { nombre: "Reservas", path: "/reservas", icono: "🏦" },
   ];
 
   return (
