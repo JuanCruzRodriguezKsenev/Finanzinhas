@@ -1,0 +1,370 @@
+/* --- LAYOUT PRINCIPAL --- */
+.main {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 2rem;
+  margin: 0;
+  color: var(--text-main);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  margin: 0.2rem 0 0 0;
+  font-size: 1rem;
+}
+
+.subtitle b {
+  color: var(--success); /* Resalta el patrimonio en verde */
+}
+
+/* BOTÓN AGREGAR (Primary) */
+.btnAdd {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btnAdd:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* GRILLA DE TARJETAS */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.empty {
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+  grid-column: 1 / -1;
+  padding: 4rem;
+  border: 2px dashed var(--border);
+  border-radius: 1rem;
+}
+
+/* --- SECCIÓN DE DETALLE (INLINE) --- */
+.detalleSection {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 4rem;
+  animation: slideUp 0.3s ease-out;
+  scroll-margin-top: 2rem; /* Margen para el scroll automático */
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.2);
+}
+
+.detalleHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.detalleTitle {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btnCloseDetail {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.2s;
+}
+
+.btnCloseDetail:hover {
+  background: var(--danger);
+  color: white;
+  border-color: var(--danger);
+}
+
+/* GRILLA INTERNA DEL DETALLE */
+.detalleGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Elementos que ocupan todo el ancho (Gráfico) */
+.boxFullWidth {
+  grid-column: 1 / -1;
+}
+
+/* CAJAS DE SECCIÓN (Contenedores internos) */
+.sectionBox {
+  background: var(--input-bg);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sectionTitle {
+  margin: 0 0 1rem 0;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+/* GRÁFICO Y TASACIONES */
+.chartContainer {
+  margin-bottom: 1rem;
+  background: var(--bg-card);
+  border-radius: 0.8rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+}
+
+.tasacionesList {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+/* Scrollbar fina para la lista horizontal */
+.tasacionesList::-webkit-scrollbar { height: 6px; }
+.tasacionesList::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.itemTasacion {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-card);
+  padding: 0.5rem 1rem;
+  border-radius: 0.6rem;
+  font-size: 0.85rem;
+  border: 1px solid var(--border);
+  min-width: 100px;
+  position: relative;
+}
+
+.itemTasacion span { color: var(--text-muted); font-size: 0.75rem; }
+.itemTasacion strong { color: var(--success); font-size: 0.95rem; }
+
+/* LISTAS DE GASTOS (Vertical) */
+.listaGastos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.itemGasto {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-card);
+  padding: 0.6rem 1rem;
+  border-radius: 0.6rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--border);
+  font-weight: 500;
+}
+
+/* Botón "X" pequeño para eliminar ítems */
+.btnIconDelete {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0 0.5rem;
+  line-height: 1;
+  transition: color 0.2s;
+}
+.btnIconDelete:hover { color: var(--danger); }
+
+/* --- FORMULARIOS (Alta, Edición y Mini-Forms) --- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.formMini {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding-top: 0.5rem;
+  margin-top: auto; /* Empuja hacia abajo en flex container */
+}
+
+.row {
+  display: flex;
+  gap: 1rem;
+}
+
+.group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+/* Inputs Grandes (Modal Principal) */
+.input {
+  padding: 0.8rem;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  color: var(--text-main);
+  outline: none;
+  width: 100%;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+.input:focus { border-color: var(--accent); }
+
+/* Inputs Pequeños (Detalle) */
+.inputSmall {
+  flex: 1;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  background: var(--bg-card);
+  color: var(--text-main);
+  outline: none;
+  min-width: 0; /* Evita desbordes en flex */
+}
+.inputSmall:focus { border-color: var(--accent); }
+
+/* BOTONES */
+.btnSave {
+  margin-top: 1rem;
+  background: linear-gradient(135deg, var(--accent), #1d4ed8);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.1s;
+}
+.btnSave:active { transform: scale(0.98); }
+
+.btnActionSmall {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+.btnDangerOutline {
+  background: transparent;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-top: 1rem;
+  width: 100%;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.btnDangerOutline:hover { background: rgba(239, 68, 68, 0.1); }
+
+/* TEXTOS AUXILIARES */
+.textMuted {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* INFO ALQUILER ACTIVO */
+.infoAlquiler {
+  background: var(--bg-card);
+  padding: 1rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--success);
+}
+.infoAlquiler p { margin: 0.4rem 0; font-size: 0.95rem; color: var(--text-main); }
+.infoAlquiler strong { color: var(--text-muted); margin-right: 0.5rem; }
+
+/* ANIMACIONES Y RESPONSIVE */
+@keyframes slideUp { 
+  from { opacity: 0; transform: translateY(20px); } 
+  to { opacity: 1; transform: translateY(0); } 
+}
+
+@media (max-width: 768px) {
+  .main { padding: 1rem; }
+  .header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .btnAdd { width: 100%; justify-content: center; }
+  .row { flex-direction: column; gap: 0.8rem; }
+  .detalleSection { padding: 1rem; }
+  .tasacionesList { flex-wrap: nowrap; } /* Mantiene scroll horizontal en móvil */
+}

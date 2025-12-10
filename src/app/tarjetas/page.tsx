@@ -17,11 +17,17 @@ const COLORES_TARJETAS = [
 export default function PaginaTarjetas() {
   const [tarjetas, setTarjetas] = useState<Tarjeta[]>([]);
   const [transacciones, setTransacciones] = useState<Transaccion[]>([]);
+
   const [tarjetaSeleccionada, setTarjetaSeleccionada] =
     useState<Tarjeta | null>(null);
+  const [tarjetaParaEditar, setTarjetaParaEditar] = useState<Tarjeta | null>(
+    null
+  ); // 👈 ESTADO EDICIÓN
 
-  // Modal Agregar
+  // Modal
   const [showModal, setShowModal] = useState(false);
+
+  // Form States
   const [nuevoAlias, setNuevoAlias] = useState("");
   const [nuevoBanco, setNuevoBanco] = useState("");
   const [nuevoTipo, setNuevoTipo] = useState<"credito" | "debito">("credito");
@@ -32,35 +38,92 @@ export default function PaginaTarjetas() {
   const [nuevoColor, setNuevoColor] = useState(COLORES_TARJETAS[0]);
 
   useEffect(() => {
-    // Cargar Tarjetas
     const dataCards = localStorage.getItem("finansinho-tarjetas");
     if (dataCards) setTarjetas(JSON.parse(dataCards));
 
-    // Cargar Transacciones (Para calcular consumos)
     const dataTrans = localStorage.getItem("finansinho-datos");
     if (dataTrans) setTransacciones(JSON.parse(dataTrans));
   }, []);
 
+  // 3. EFECTO: CARGAR DATOS AL EDITAR
+  useEffect(() => {
+    if (tarjetaParaEditar) {
+      setNuevoAlias(tarjetaParaEditar.alias);
+      setNuevoBanco(tarjetaParaEditar.banco);
+      setNuevoTipo(tarjetaParaEditar.tipo);
+      setNuevoLimite(tarjetaParaEditar.limite.toString());
+      setNuevoCierre(tarjetaParaEditar.diaCierre?.toString() || "");
+      setNuevoVenc(tarjetaParaEditar.diaVencimiento?.toString() || "");
+      setNuevoLast4(tarjetaParaEditar.ultimos4);
+      setNuevoColor(tarjetaParaEditar.color);
+      setShowModal(true);
+    }
+  }, [tarjetaParaEditar]);
+
+  const resetForm = () => {
+    setNuevoAlias("");
+    setNuevoBanco("");
+    setNuevoLimite("");
+    setNuevoLast4("");
+    setNuevoCierre("");
+    setNuevoVenc("");
+    setTarjetaParaEditar(null);
+  };
+
+  const abrirModalCrear = () => {
+    setTarjetaParaEditar(null); // Modo crear
+    resetForm();
+    setShowModal(true);
+  };
+
+  const cerrarModal = () => {
+    setShowModal(false);
+    setTimeout(() => {
+      setTarjetaParaEditar(null);
+      resetForm();
+    }, 300);
+  };
+
   const guardarTarjeta = () => {
     if (!nuevoAlias || !nuevoBanco) return;
 
-    const nueva: Tarjeta = {
-      id: Date.now(),
-      alias: nuevoAlias,
-      banco: nuevoBanco,
-      tipo: nuevoTipo,
-      ultimos4: nuevoLast4 || "0000",
-      limite: parseFloat(nuevoLimite) || 0,
-      diaCierre: parseInt(nuevoCierre) || 1,
-      diaVencimiento: parseInt(nuevoVenc) || 10,
-      color: nuevoColor,
-    };
+    if (tarjetaParaEditar) {
+      // MODO EDICIÓN
+      const actualizada: Tarjeta = {
+        ...tarjetaParaEditar,
+        alias: nuevoAlias,
+        banco: nuevoBanco,
+        tipo: nuevoTipo,
+        ultimos4: nuevoLast4 || "0000",
+        limite: parseFloat(nuevoLimite) || 0,
+        diaCierre: parseInt(nuevoCierre) || 1,
+        diaVencimiento: parseInt(nuevoVenc) || 10,
+        color: nuevoColor,
+      };
+      const nuevaLista = tarjetas.map((t) =>
+        t.id === actualizada.id ? actualizada : t
+      );
+      setTarjetas(nuevaLista);
+      localStorage.setItem("finansinho-tarjetas", JSON.stringify(nuevaLista));
+    } else {
+      // MODO CREACIÓN
+      const nueva: Tarjeta = {
+        id: Date.now(),
+        alias: nuevoAlias,
+        banco: nuevoBanco,
+        tipo: nuevoTipo,
+        ultimos4: nuevoLast4 || "0000",
+        limite: parseFloat(nuevoLimite) || 0,
+        diaCierre: parseInt(nuevoCierre) || 1,
+        diaVencimiento: parseInt(nuevoVenc) || 10,
+        color: nuevoColor,
+      };
+      const nuevaLista = [...tarjetas, nueva];
+      setTarjetas(nuevaLista);
+      localStorage.setItem("finansinho-tarjetas", JSON.stringify(nuevaLista));
+    }
 
-    const nuevaLista = [...tarjetas, nueva];
-    setTarjetas(nuevaLista);
-    localStorage.setItem("finansinho-tarjetas", JSON.stringify(nuevaLista));
-    setShowModal(false);
-    resetForm();
+    cerrarModal();
   };
 
   const eliminarTarjeta = (id: number) => {
@@ -71,30 +134,14 @@ export default function PaginaTarjetas() {
     if (tarjetaSeleccionada?.id === id) setTarjetaSeleccionada(null);
   };
 
-  const resetForm = () => {
-    setNuevoAlias("");
-    setNuevoBanco("");
-    setNuevoLimite("");
-    setNuevoLast4("");
-  };
-
-  // Calcular consumo por tarjeta (filtrando las transacciones que tienen tarjetaId)
   const calcularConsumo = (idTarjeta: number) => {
-    // NOTA: Para que esto funcione 100% real, deberíamos actualizar
-    // el formulario de agregar gasto para que permita seleccionar tarjeta.
-    // Por ahora, simulamos o filtramos si agregamos esa lógica.
-
-    // Filtramos por el nombre del método de pago si coincide con el alias (estrategia simple)
-    // O idealmente usar el tarjetaId si ya lo implementaste en el form.
     const tarjeta = tarjetas.find((t) => t.id === idTarjeta);
     if (!tarjeta) return 0;
-
     return transacciones
       .filter((t) => t.metodoPago === tarjeta.alias && t.tipo === "gasto")
       .reduce((acc, t) => acc + t.monto, 0);
   };
 
-  // Transacciones de la tarjeta seleccionada
   const transaccionesFiltradas = tarjetaSeleccionada
     ? transacciones.filter((t) => t.metodoPago === tarjetaSeleccionada.alias)
     : [];
@@ -103,12 +150,11 @@ export default function PaginaTarjetas() {
     <main className={styles.main}>
       <div className={styles.header}>
         <h1>Mis Tarjetas 💳</h1>
-        <button className={styles.btnAdd} onClick={() => setShowModal(true)}>
+        <button className={styles.btnAdd} onClick={abrirModalCrear}>
           + Nueva Tarjeta
         </button>
       </div>
 
-      {/* GRID DE TARJETAS (WALLET) */}
       <div className={styles.walletGrid}>
         {tarjetas.map((t) => (
           <CreditCard
@@ -116,6 +162,7 @@ export default function PaginaTarjetas() {
             data={t}
             consumoActual={calcularConsumo(t.id)}
             onDelete={eliminarTarjeta}
+            onEdit={setTarjetaParaEditar} // 👈 Pasamos el setter para activar la edición
             onSelect={setTarjetaSeleccionada}
             isSelected={tarjetaSeleccionada?.id === t.id}
           />
@@ -125,7 +172,6 @@ export default function PaginaTarjetas() {
         )}
       </div>
 
-      {/* DETALLE SELECCIONADO */}
       {tarjetaSeleccionada && (
         <div className={styles.detalleSection}>
           <div className={styles.detalleHeader}>
@@ -141,20 +187,18 @@ export default function PaginaTarjetas() {
               </div>
             )}
           </div>
-
           <Lista
             items={transaccionesFiltradas}
-            alEliminar={() => {}} // Solo lectura aquí para no complicar
+            alEliminar={() => {}}
             alSeleccionar={() => {}}
           />
         </div>
       )}
 
-      {/* MODAL AGREGAR */}
       <FormDialog
         open={showModal}
-        onClose={() => setShowModal(false)}
-        title="Agregar Tarjeta"
+        onClose={cerrarModal}
+        title={tarjetaParaEditar ? "Editar Tarjeta ✏️" : "Nueva Tarjeta 💳"}
       >
         <div className={styles.form}>
           <div className={styles.row}>
@@ -237,7 +281,7 @@ export default function PaginaTarjetas() {
           </div>
 
           <button className={styles.btnSave} onClick={guardarTarjeta}>
-            Guardar Tarjeta
+            {tarjetaParaEditar ? "Guardar Cambios" : "Guardar Tarjeta"}
           </button>
         </div>
       </FormDialog>

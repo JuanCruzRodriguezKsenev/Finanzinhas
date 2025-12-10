@@ -4,8 +4,9 @@ import { Tarjeta } from "@/types";
 
 interface Props {
   data: Tarjeta;
-  consumoActual: number; // Calculado desde las transacciones
+  consumoActual: number;
   onDelete: (id: number) => void;
+  onEdit: (t: Tarjeta) => void; // 👈 NUEVA PROP
   onSelect: (t: Tarjeta) => void;
   isSelected: boolean;
 }
@@ -14,23 +15,14 @@ export default function CreditCard({
   data,
   consumoActual,
   onDelete,
+  onEdit,
   onSelect,
   isSelected,
 }: Props) {
-  // Calcular porcentaje de uso (Solo crédito)
   const porcentajeUso =
-    data.tipo === "credito"
+    data.tipo === "credito" && data.limite > 0
       ? Math.min((consumoActual / data.limite) * 100, 100)
       : 0;
-
-  // Calcular próximas fechas
-  const hoy = new Date();
-  const proximoCierre = new Date(
-    hoy.getFullYear(),
-    hoy.getMonth(),
-    data.diaCierre || 1
-  );
-  if (proximoCierre < hoy) proximoCierre.setMonth(proximoCierre.getMonth() + 1);
 
   return (
     <div
@@ -40,15 +32,30 @@ export default function CreditCard({
     >
       <div className={styles.topRow}>
         <span className={styles.banco}>{data.banco}</span>
-        <button
-          className={styles.btnDelete}
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(data.id);
-          }}
-        >
-          ✕
-        </button>
+
+        {/* BOTONES DE ACCIÓN */}
+        <div className={styles.actions}>
+          <button
+            className={styles.btnAction}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(data);
+            }}
+            title="Editar"
+          >
+            ✏️
+          </button>
+          <button
+            className={styles.btnAction}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(data.id);
+            }}
+            title="Eliminar"
+          >
+            ✕
+          </button>
+        </div>
       </div>
 
       <div className={styles.chipRow}>
@@ -76,7 +83,6 @@ export default function CreditCard({
         </div>
       </div>
 
-      {/* BARRA DE CONSUMO (Solo Crédito) */}
       {data.tipo === "credito" && (
         <div className={styles.limitBar}>
           <div

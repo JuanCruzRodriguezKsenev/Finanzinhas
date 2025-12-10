@@ -16,6 +16,7 @@ export default function Navbar() {
     { nombre: "Presupuestos", path: "/presupuestos", icono: "🎯" },
     // Dentro del array de rutas:
     { nombre: "Tarjetas", path: "/tarjetas", icono: "💳" },
+    { nombre: "Inmuebles", path: "/inmuebles", icono: "🏠" },
   ];
 
   return (
